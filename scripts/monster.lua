@@ -302,6 +302,19 @@ function Player_has_weapon(weap_needed)
 end
 
 
+function Player_has_min_weapon(min_weapon)
+  each name,info in GAME.WEAPONS do
+    if (info.level or 0) >= min_weapon then
+      if Player_has_weapon({ [name]=1 }) then
+        return true
+      end
+    end
+  end
+
+  return false
+end
+
+
 ----------------------------------------------------------------
 
 
@@ -521,6 +534,8 @@ function Monsters_zone_palettes()
 
     if (info.prob or 0) <= 0 then return 0 end
 
+    -- FIXME !!!!  support min_weapon and weap_needed
+
     -- ignore theme-specific monsters (SS NAZI)
     if info.theme then return 0 end
 
@@ -533,10 +548,11 @@ function Monsters_zone_palettes()
     prob = prob ^ 0.6
 
     -- huge monsters often won't fit in a room, so lower their chance
-    if info.r > 60 then prob = prob / 3 end
+    if info.r > 60 then prob = prob / 2 end
 
     if prob < 1 then prob = 1 end
 
+    -- "new" (not seen yet) monsters make the best guards in early maps
     if info.level > LEVEL.max_level + 2 then return prob * 20 end
     if info.level > LEVEL.max_level + 1 then return prob * 40 end
     if info.level > LEVEL.max_level     then return prob * 80 end
@@ -1670,6 +1686,10 @@ function Monsters_in_room(R)
     prob = prob or 0
 
     if not LEVEL.global_pal[mon] then
+      return 0
+    end
+
+    if info.min_weapon and not Player_has_min_weapon(info.min_weapon) then
       return 0
     end
 
