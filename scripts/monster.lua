@@ -375,24 +375,68 @@ end
 
 
 function Monsters_max_level()
-  local max_level = 10 * (LEVEL.mon_along or 0.5) + 1
+  local mon_along = LEVEL.game_along
 
-  LEVEL.weap_level = max_level
+  if LEVEL.is_secret then
+    -- secret levels are easier
+    mon_along = rand.skew(0.4, 0.25)
 
-  if OB_CONFIG.strength == "tough" or
-     OB_CONFIG.strength == "crazy"
-  then
-    max_level = max_level * 1.6
+  elseif OB_CONFIG.length == "single" then
+    -- for single level, use skew to occasionally make extremes
+    mon_along = rand.skew(0.5, 0.35)
 
-  elseif OB_CONFIG.strength == "weak" then
-    max_level = max_level / 1.3
+  elseif OB_CONFIG.length == "game" then
+    -- reach peak strength after about 70% of the full game
+    mon_along = math.min(1.0, mon_along / 0.70)
   end
 
-  if max_level < 1 then max_level = 1 end
+  assert(mon_along >= 0)
+
+  if OB_CONFIG.strength == "crazy" then
+    mon_along = 1.2
+  else
+    local FACTORS = { weak=1.7, lower=1.3, medium=1.0, higher=0.8, tough=0.6 }
+
+    local factor = FACTORS[OB_CONFIG.strength]
+    assert(factor)
+
+    mon_along = mon_along ^ factor
+
+    if OB_CONFIG.strength == "higher" or
+       OB_CONFIG.strength == "tough"
+    then
+      mon_along = mon_along + 0.1
+    end
+  end
+
+  local max_level = 1 + 9 * mon_along
 
   LEVEL.max_level = max_level
 
-  gui.printf("Monster max_level: %1.1f\n", max_level)
+  gui.printf("Monster max_level: %1.1f\n", LEVEL.max_level)
+
+
+  --- Weapon level ---
+
+  local weap_along = LEVEL.game_along
+
+  -- allow everything in a single level, or the "Mixed" choice
+  if OB_CONFIG.length == "single" or OB_CONFIG.weapons == "mixed" then
+    weap_along = 1.0
+
+  elseif OB_CONFIG.length == "game" then
+    -- reach peak sooner in a full game (after about an episode)
+    weap_along = math.min(1.0, weap_along * 3.0)
+  end
+
+  -- small adjustment for the 'Weapons' setting
+  if OB_CONFIG.weapons == "more" then
+    weap_along = weap_along ^ 0.8 + 0.2
+  end
+
+  LEVEL.weapon_level = 1 + 9 * weap_along
+
+  gui.printf("Weapon max level: %1.1f\n", LEVEL.weapon_level)
 end
 
 
