@@ -844,7 +844,13 @@ function Plan_add_caves()
 
   --- compute the quotas ---
 
-  local perc = style_sel("caves", 0, 12, 30, 65, 150)
+  local perc      = style_sel("caves",   0, 40, 50, 80)
+  local skip_prob = style_sel("caves", 100, 75, 25,  0)
+
+  if rand.odds(skip_prob) then
+    gui.printf("Caves: SKIPPED (by style)\n")
+    return
+  end
 
   if perc == 0 then
     gui.printf("Caves: NONE\n")
@@ -1457,16 +1463,20 @@ function Plan_decide_outdoors()
     end
   end
 
-  if table.empty(room_list) or
-     STYLE.outdoors == "none"
-  then
-    gui.printf("Outdoor Quota: NONE\n")
+  if table.empty(room_list) or STYLE.outdoors == "none" then
+    gui.printf("Outdoors: NONE\n")
     return
   end
 
 
   -- compute the quota
-  local perc = style_sel("outdoors", 0, 15, 40, 72, 130)
+  local perc      = style_sel("outdoors",   0, 35, 35, 75)
+  local skip_prob = style_sel("outdoors", 100, 50,  0,  0)
+
+  if rand.odds(skip_prob) then
+    gui.printf("Outdoors: SKIPPED (by style)\n")
+    return
+  end
 
   local quota = total_seeds * perc / 100
 
