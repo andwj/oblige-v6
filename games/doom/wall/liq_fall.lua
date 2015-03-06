@@ -11,6 +11,7 @@ PREFABS.Wall_liquid_fall =
   deep   = 16
 
   x_fit  = "frame"
+  z_fit  = { 0,32, 144,152 }
 
   bound_z1 = 0
   bound_z2 = 160
