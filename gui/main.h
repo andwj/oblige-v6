@@ -70,6 +70,9 @@ void Main_ProgStatus(const char *msg, ...);
 bool Main_BackupFile(const char *filename, const char *ext);
 void Main_Ticker();
 
+u32_t Main_CalcNewSeed();
+void  Main_SetSeed(u32_t val);
+
 
 // Dialog Windows
 void DLG_ShowError(const char *msg, ...);
@@ -80,6 +83,7 @@ void DLG_AboutText(void);
 void DLG_OptionsEditor(void);
 void DLG_ManageConfig(void);
 void DLG_ToggleConsole(void);
+void DLG_EditSeed(void);
 
 void ConPrintf(const char *str, ...);
 
