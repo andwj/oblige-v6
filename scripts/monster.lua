@@ -4,7 +4,7 @@
 --
 --  Oblige Level Maker
 --
---  Copyright (C) 2008-2014 Andrew Apted
+--  Copyright (C) 2008-2015 Andrew Apted
 --
 --  This program is free software; you can redistribute it and/or
 --  modify it under the terms of the GNU General Public License
@@ -1938,7 +1938,7 @@ function Monsters_in_room(R)
     local ang = geom.calc_angle(nx - x, ny - y)
 
     -- randomize a bit
-    ang = ang + 60 * rand.skew()
+    ang = ang + 50 * rand.skew()
 
     return quantize_angle(ang)
   end
