@@ -28,7 +28,6 @@
 Inputs:
    monsters   : list of monsters that the player must kill
    weapons    : list of weapons that player can use
-   weap_prefs : weapon preference table (can be empty)
 
 Output:
    stats : health that player needs to survive the battle +
@@ -71,7 +70,7 @@ Notes:
 ----------------------------------------------------------------]]
 
 
-function Fight_Simulator(monsters, weapons, weap_prefs, stats)
+function Fight_Simulator(monsters, weapons, stats)
 
   local active_mons = {}
 
@@ -92,24 +91,27 @@ function Fight_Simulator(monsters, weapons, weap_prefs, stats)
     assert(first_mon)
 
     -- determine probability for each weapon
-    local probs = {}
+    local prob_tab = {}
 
     each W in weapons do
-      local pref = W.pref * (weap_prefs[W.name] or 1)
+      local prob = W.info.pref
+
+      prob = prob * (W.factor or 1)
 
       -- handle monster-based weapon preferences
       if first_mon.weap_prefs then
-        pref = pref * (first_mon.weap_prefs[W.name] or 1)
+        prob = prob * (first_mon.weap_prefs[W.name] or 1)
       end
 
-      table.insert(probs, pref)
+      table.insert(prob_tab, prob)
     end
 
-    assert(#probs == #weapons)
+    assert(#prob_tab == #weapons)
 
-    local index = rand.index_by_probs(probs)
+    local index = rand.index_by_probs(prob_tab)
+    local W     = assert(weapons[index])
 
-    return assert(weapons[index])
+    return W.info
   end
 
 
@@ -159,8 +161,11 @@ function Fight_Simulator(monsters, weapons, weap_prefs, stats)
   end
 
 
-  local function calc_monster_threat(info)
-    local threat = info.health + info.damage * 7
+  local function calc_monster_threat(M)
+    local threat = M.info.health + M.info.damage * 7
+
+    -- caged monsters pose less of a threat
+    if M.is_cage and not M.info.nasty then threat = threat / 3 end
 
     return threat + gui.random() * 20  -- tie breaker
   end
@@ -170,13 +175,12 @@ function Fight_Simulator(monsters, weapons, weap_prefs, stats)
 
   stats.health = stats.health or 0
 
-  each name,info in monsters do
-    local MON =
-    {
-      info   = info
-      health = info.health
-      threat  = calc_monster_threat(info)
-    }
+  each M in monsters do
+    local MON = table.copy(M)
+
+    MON.health = MON.info.health
+    MON.threat = calc_monster_threat(MON)
+
     table.insert(active_mons, MON)
   end
 

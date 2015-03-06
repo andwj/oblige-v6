@@ -1990,7 +1990,7 @@ function Monsters_in_room(R)
       info = assert(GAME.MONSTERS[mon])
     end
 
-    table.insert(R.monster_list, info)
+    table.insert(R.monster_list, { info=info, is_cage=is_cage })
 
     -- decide deafness and where to look
     local deaf, focus
@@ -2545,11 +2545,6 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
       fill_monster_map(palette, barrel_chance)
     end
 
-    -- this value keeps track of the number of "normal" monsters
-    -- (i.e. monsters not in cages or traps).  Later we use this
-    -- value to only give monster drops for accessible monsters.
-    R.normal_count = #R.monster_list
-
     if not table.empty(palette) then
       fill_cages(R.cage_spots, palette)
     end
@@ -2559,7 +2554,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
   local function make_empty_stats()
     local stats = {}
 
-    for CL,_ in pairs(GAME.PLAYER_MODEL) do
+    each CL,_ in GAME.PLAYER_MODEL do
       stats[CL] = {}
     end
 
@@ -2573,8 +2568,10 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
     each name,_ in hmodel.weapons do
       local info = assert(GAME.WEAPONS[name])
+      local factor = R.zone.weap_palette[name]
+
       if info.pref then
-        table.insert(list, info)
+        table.insert(list, { info=info, factor=factor })
         seen[name] = true
       end
     end
@@ -2586,7 +2583,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
         local info = assert(GAME.WEAPONS[name])
         assert(info.pref)
 
-        table.insert(list, info)
+        table.insert(list, { info=info, factor=0.35 })
       end
       end
     end
@@ -2599,12 +2596,12 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
   end
 
 
-  local function give_monster_drops(hmodel, mon_list, count)
-    for i = 1,count do
-      local info = mon_list[i]
+  local function give_monster_drops(hmodel, mon_list)
+    each M in mon_list do
+      if M.is_cage then continue end
 
-      if info.give then
-        Player_give_stuff(hmodel, info.give)
+      if M.info.give then
+        Player_give_stuff(hmodel, M.info.give)
       end
     end
   end
@@ -2657,11 +2654,11 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     gui.debugf("Fight Simulator @ %s  class: %s\n", R:tostr(), CL)
 
     gui.debugf("weapons = \n")
-    each info in weap_list do
-      gui.debugf("  %s\n", info.name)
+    each W in weap_list do
+      gui.debugf("  %s\n", W.info.name)
     end
 
-    Fight_Simulator(mon_list, weap_list, R.zone.weap_palette, stats)
+    Fight_Simulator(mon_list, weap_list, stats)
 
 --  gui.debugf("raw result = \n%s\n", table.tostr(stats,1))
 
@@ -2669,7 +2666,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
 --  gui.debugf("adjusted result = \n%s\n", table.tostr(stats,1))
 
-    give_monster_drops(hmodel, mon_list, R.normal_count)
+    give_monster_drops(hmodel, mon_list)
 
     subtract_stuff_we_have(stats, hmodel)
   end
