@@ -1841,7 +1841,7 @@ if pat.recurse == "pure" then factor = factor * 100 end
     local solid_factor = 1.0
     if STYLE.junk == "heaps" then solid_factor = 3.0 end
 
-    local liquid_factor = style_sel("liquids", 0, 0.2, 1.0, 5.0)
+    local liquid_factor = (LEVEL.liquid_usage / 40) ^ 2
 
     local exfl_factor = style_sel("ex_floors", 0, 0.2, 1.0, 5.0)
 

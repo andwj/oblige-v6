@@ -73,30 +73,43 @@ end
 
 
 function Plan_choose_liquid()
-  if THEME.liquids and STYLE.liquids != "none" then
-    local name = rand.key_by_probs(THEME.liquids)
-    local liquid = GAME.LIQUIDS[name]
+  if not THEME.liquids then
+    gui.printf("Liquid: disabled by theme.\n\n")
+    LEVEL.liquid_usage = 0
+    return
+  end
 
-    if not liquid then
-      error("No such liquid: " .. name)
-    end
+  local usage     = style_sel("liquids", 0, 20, 40, 90)
+  local skip_prob = style_sel("liquids", 100, 30, 10, 0)
 
-    gui.printf("Liquid: %s\n\n", name)
-
-    LEVEL.liquid = liquid
-
-     -- setup the special '_LIQUID' material
-    assert(liquid.mat)
-    assert(GAME.MATERIALS[liquid.mat])
-
-    GAME.MATERIALS["_LIQUID"] = GAME.MATERIALS[liquid.mat]
-
-  else
+  if rand.odds(skip_prob) then
     -- leave '_LIQUID' unset : it should not be used, but if does then
     -- the _ERROR texture will appear (like any other unknown material.
-
-    gui.printf("Liquids disabled.\n\n")
+    gui.printf("Liquid: skipped for level (by style).\n\n")
+    LEVEL.liquid_usage = 0
+    return
   end
+
+  -- allow liquids, but control how much we use
+  LEVEL.liquid_usage = usage
+  
+  -- pick the liquid to use
+  local name = rand.key_by_probs(THEME.liquids)
+  local liquid = GAME.LIQUIDS[name]
+
+  if not liquid then
+    error("No such liquid: " .. name)
+  end
+
+  LEVEL.liquid = liquid
+
+  gui.printf("Liquid: %s (usage %d%%)\n\n", name, LEVEL.liquid_usage)
+
+  -- setup the special '_LIQUID' material
+  assert(liquid.mat)
+  assert(GAME.MATERIALS[liquid.mat])
+
+  GAME.MATERIALS["_LIQUID"] = GAME.MATERIALS[liquid.mat]
 end
 
 
