@@ -186,6 +186,7 @@ function Player_give_room_stuff(R)
   if R.weapons and not PARAM.hexen_weapons then
     each name in R.weapons do
       Player_give_weapon(name)
+      EPISODE.seen_weapons[name] = 1
     end
   end
 end
@@ -2527,11 +2528,24 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
   local function collect_weapons(hmodel)
     local list = {}
+    local seen = {}
 
     each name,_ in hmodel.weapons do
       local info = assert(GAME.WEAPONS[name])
       if info.pref then
         table.insert(list, info)
+      end
+
+      seen[name] = true
+    end
+
+    -- gameplay_tweaks : assume weapons from previous levels
+    if PARAM.keep_weapons then
+      each name,_ in EPISODE.seen_weapons do
+        local info = assert(GAME.WEAPONS[name])
+        assert(info.pref)
+
+        table.insert(list, { info=info, factor=0.35 })
       end
     end
 
@@ -2637,13 +2651,18 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
     if R.no_monsters then return false end
 
-    assert(not R.scenic)
+    if R.kind == "stairwell" then return false end
+
+    -- gameplay_tweaks module
+    if PARAM.quiet_start and R.purpose == "START" then
+      return false
+    end
 
 ---???    if R.kind == "hallway" and #R.sections == 1 then
 ---???      return rand.odds(50)
 ---???    end
 
-    return true
+    return true  -- OK --
   end
 
 

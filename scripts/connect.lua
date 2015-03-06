@@ -1802,6 +1802,9 @@ function Connect_reserved_rooms()
   local function find_alternate_start()
     best = { score=-1 }
 
+    -- disabled by gameplay_tweaks module?
+    if PARAM.start_together then return end
+
     each R in LEVEL.reserved_rooms do
       evaluate_alt_start(R)
     end
