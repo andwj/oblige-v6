@@ -2535,18 +2535,19 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
       local info = assert(GAME.WEAPONS[name])
       if info.pref then
         table.insert(list, info)
+        seen[name] = true
       end
-
-      seen[name] = true
     end
 
     -- gameplay_tweaks : assume weapons from previous levels
     if PARAM.keep_weapons then
       each name,_ in EPISODE.seen_weapons do
+      if not seen[name] then
         local info = assert(GAME.WEAPONS[name])
         assert(info.pref)
 
-        table.insert(list, { info=info, factor=0.35 })
+        table.insert(list, info)
+      end
       end
     end
 
