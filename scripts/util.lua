@@ -140,6 +140,9 @@ function style_sel(name, v_none, v_few, v_some, v_heaps, v_all)
   if keyword == "heaps"  then return v_heaps end
   if keyword == "always" then return v_all or v_heaps end
 
+  if keyword == "less"   then return (v_few   + v_some) / 2 end
+  if keyword == "more"   then return (v_heaps + v_some) / 2 end
+
   return v_some
 end
 
