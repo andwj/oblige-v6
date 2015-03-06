@@ -2,46 +2,41 @@
 # OBLIGE
 #----------------------------------------------------------------
 #
-# GNU Makefile for WIN32, using CROSS-COMPILER on Linux
+# GNU Makefile for Unix/Linux with system-wide install
+#
+# Using this makefile (make, make install) will place the
+# executable, script and data files in standard Unixy places.
+#
+# NOTE: a system-wide FLTK library is assumed
 #
 
-PROGRAM=Oblige.exe
+PROGRAM=Oblige
 
-CROSS=i686-w64-mingw32-
+# prefix choices: /usr  /usr/local  /opt
+PREFIX=/usr/local
 
-CXX=$(CROSS)g++
+SCRIPT_DIR=$(PREFIX)/share/oblige
 
-LIB_LOC=lib_win32
-OBJ_DIR=obj_win32
+CXX=g++
 
-FLTK_DIR=$(LIB_LOC)/fltk-1.3.3
-ZLIB_DIR=$(LIB_LOC)/zlib-1.2.8
+OBJ_DIR=obj_linux
 
-OPTIMISE=-O2 -fno-strict-aliasing
+OPTIMISE=-g3 -O0
 
-STRIP_FLAGS=--strip-unneeded
-
-OS=WIN32
+# operating system choices: UNIX WIN32
+OS=UNIX
 
 
 #--- Internal stuff from here -----------------------------------
 
-FLTK_FLAGS=-I$(FLTK_DIR)
-FLTK_LIBS=$(FLTK_DIR)/mingw/lib/libfltk_images.a \
-	  $(FLTK_DIR)/mingw/lib/libfltk.a
+# assumes system-wide FLTK installation
+FLTK_CONFIG=fltk-config
+FLTK_FLAGS=$(shell $(FLTK_CONFIG) --cflags)
+FLTK_LIBS=$(shell $(FLTK_CONFIG) --use-images --ldflags)
 
-ZLIB_FLAGS=-I$(ZLIB_DIR)
-ZLIB_LIBS=$(ZLIB_DIR)/libz.a
-
-CXXFLAGS=$(OPTIMISE) -Wall -D$(OS) \
-         -Ilua_src -Iglbsp_src -Iajpoly_src \
-	 $(FLTK_FLAGS) $(ZLIB_FLAGS)
-
-LDFLAGS=-static-libgcc -static-libstdc++
-
-LIBS=-lm $(FLTK_LIBS) $(ZLIB_LIBS) \
-     -mwindows -lcomdlg32 -lole32 -luuid -lgdi32 \
-     -lcomctl32 -lwsock32 -lsupc++
+CXXFLAGS=$(OPTIMISE) -Wall -D$(OS) -Ilua_src -Iglbsp_src -Iajpoly_src $(FLTK_FLAGS)
+LDFLAGS=-L/usr/X11R6/lib
+LIBS=-lm -lz $(FLTK_LIBS)
 
 
 #----- OBLIGE Objects ----------------------------------------------
@@ -55,7 +50,6 @@ OBJS=	$(OBJ_DIR)/main.o      \
 	$(OBJ_DIR)/m_manage.o  \
 	$(OBJ_DIR)/m_options.o  \
 	$(OBJ_DIR)/m_spots.o   \
-	$(OBJ_DIR)/oblige_res.o \
 	$(OBJ_DIR)/lib_argv.o  \
 	$(OBJ_DIR)/lib_file.o  \
 	$(OBJ_DIR)/lib_signal.o \
@@ -146,7 +140,7 @@ LUA_OBJS=\
 	$(OBJ_DIR)/lua/loadlib.o   \
 	$(OBJ_DIR)/lua/linit.o
 
-LUA_CXXFLAGS=$(OPTIMISE) -Wall -DLUA_ANSI
+LUA_CXXFLAGS=$(OPTIMISE) -Wall -DLUA_ANSI -DLUA_USE_MKSTEMP
 
 $(OBJ_DIR)/lua/%.o: lua_src/%.cc
 	$(CXX) $(LUA_CXXFLAGS) -o $@ -c $<
@@ -166,7 +160,7 @@ GLBSP_OBJS= \
 	$(OBJ_DIR)/glbsp/util.o     \
 	$(OBJ_DIR)/glbsp/wad.o
 
-GLBSP_CXXFLAGS=$(OPTIMISE) -Wall -DINLINE_G=inline $(ZLIB_FLAGS)
+GLBSP_CXXFLAGS=$(OPTIMISE) -Wall -DINLINE_G=inline
 
 $(OBJ_DIR)/glbsp/%.o: glbsp_src/%.cc
 	$(CXX) $(GLBSP_CXXFLAGS) -o $@ -c $< 
@@ -190,22 +184,55 @@ $(OBJ_DIR)/ajpoly/%.o: ajpoly_src/%.cc
 
 all: $(PROGRAM)
 
+$(PROGRAM): $(OBJS) $(LUA_OBJS) $(GLBSP_OBJS) $(AJPOLY_OBJS)
+	$(CXX) -Wl,--warn-common $^ -o $@ $(LDFLAGS) $(LIBS)
+
 clean:
 	rm -f $(PROGRAM) $(OBJ_DIR)/*.o ERRS
 	rm -f $(OBJ_DIR)/lua/*.o
 	rm -f $(OBJ_DIR)/glbsp/*.o
 	rm -f $(OBJ_DIR)/ajpoly/*.o
 
-$(PROGRAM): $(OBJS) $(LUA_OBJS) $(GLBSP_OBJS) $(AJPOLY_OBJS)
-	$(CXX) $^ -o $@ $(LDFLAGS) $(LIBS)
+halfclean:
+	rm -f $(PROGRAM) $(OBJ_DIR)/*.o ERRS
 
 stripped: $(PROGRAM)
-	$(CROSS)strip $(STRIP_FLAGS) $(PROGRAM)
+	strip --strip-unneeded $(PROGRAM)
 
-$(OBJ_DIR)/oblige_res.o: gui/oblige.rc
-	$(CROSS)windres $^ -o $@
+install: stripped
+	install -o root -m 755 $(PROGRAM) $(PREFIX)/bin/oblige
+	#
+	install -d $(SCRIPT_DIR)/scripts
+	install -d $(SCRIPT_DIR)/engines
+	install -d $(SCRIPT_DIR)/modules
+	#
+	install -o root -m 644 scripts/*.lua $(SCRIPT_DIR)/scripts
+	install -o root -m 644 engines/*.lua $(SCRIPT_DIR)/engines
+	install -o root -m 644 modules/*.lua $(SCRIPT_DIR)/modules
+	#
+	install -d $(SCRIPT_DIR)/data
+	install -d $(SCRIPT_DIR)/data/doom1_boss
+	install -d $(SCRIPT_DIR)/data/doom2_boss
+	install -o root -m 644 data/*.* $(SCRIPT_DIR)/data
+	install -o root -m 644 data/doom1_boss/*.* $(SCRIPT_DIR)/data/doom1_boss
+	install -o root -m 644 data/doom2_boss/*.* $(SCRIPT_DIR)/data/doom2_boss
+	#
+	rm -Rf $(SCRIPT_DIR)/games
+	svn export games $(SCRIPT_DIR)/games
+	chown -R root $(SCRIPT_DIR)/games
+	chmod -R g-s  $(SCRIPT_DIR)/games
+	#
+	xdg-desktop-menu  install --novendor misc/oblige.desktop
+	xdg-icon-resource install --novendor --size 32 misc/oblige.xpm
 
-.PHONY: all clean stripped
+uninstall:
+	rm -v $(PREFIX)/bin/oblige
+	rm -Rv $(SCRIPT_DIR) 
+	#
+	xdg-desktop-menu  uninstall --novendor misc/oblige.desktop
+	xdg-icon-resource uninstall --novendor --size 32 oblige
+
+.PHONY: all clean halfclean stripped install uninstall
 
 #--- editor settings ------------
 # vi:ts=8:sw=8:noexpandtab
