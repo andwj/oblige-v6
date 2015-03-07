@@ -1472,7 +1472,7 @@ function Plan_decide_outdoors()
 
 
   -- compute the quota
-  local perc      = style_sel("outdoors",   0, 35, 35, 75)
+  local perc      = style_sel("outdoors",   0, 30, 30, 75)
   local skip_prob = style_sel("outdoors", 100, 50,  0,  0)
 
   if rand.odds(skip_prob) then
