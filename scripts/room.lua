@@ -3336,6 +3336,24 @@ function Room_build_seeds(R)
   end
 
 
+  local function build_trigger(S, trigger)
+    local mx, my = S:mid_point()
+
+    local r = trigger.r
+
+    local brush = brushlib.quad(mx - r, my - r, mx + r, my + r)
+
+    each C in brush do
+      C.special = assert(trigger.special)
+      C.tag     = assert(trigger.tag)
+    end
+
+    brushlib.set_kind(brush, "trigger")
+
+    Trans.brush(brush)
+  end
+
+
   local function content_big_item(item, mx, my, z)
     local fab_name = "Item_pedestal"
 
@@ -4515,6 +4533,10 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
         content_teleporter(S)
       else
         content_purpose(S)
+      end
+
+      if S.trigger then
+        build_trigger(S, S.trigger)
       end
     end
 
