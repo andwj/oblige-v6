@@ -1555,8 +1555,8 @@ end
 
 
 function Layout_traps_and_cages(R)
-  local  junk_list = {}
-  local other_list = {}
+  local  junk_list
+  local other_list
 
   local DIR_LIST
 
@@ -1599,6 +1599,9 @@ function Layout_traps_and_cages(R)
 
 
   local function collect_cage_seeds()
+     junk_list = {}
+    other_list = {}
+
     for x = R.sx1, R.sx2 do
     for y = R.sy1, R.sy2 do
       local S = SEEDS[x][y]
@@ -1667,8 +1670,72 @@ function Layout_traps_and_cages(R)
   end
 
 
+  local function make_trap(goal, S, trigger)
+    -- FIXME
+  end
+
+
+  local function try_trapify_important(goal)
+    if not
+       (goal.kind == "KEY"    or goal.kind == "SWITCH" or
+        goal.kind == "WEAPON" or goal.kind == "ITEM")
+    then
+      return false
+    end
+
+    -- less chance for mere items
+    if (goal.kind == "WEAPON" or goal.kind == "ITEM") and
+       rand.odds(40 * 0) then
+      return false
+    end
+ 
+    if table.empty(junk_list) then
+      return
+    end
+    
+    -- OK --
+
+    local TRIGGER =
+    {
+      r = 64
+      special = 109  -- W1 : open and stay /fast
+      tag = alloc_id("tag")
+    }
+
+    goal.S.trigger = TRIGGER
+
+
+    while true do
+      local S = table.remove(junk_list, 1)
+
+      make_trap(goal, S, trigger)
+
+      if rand.odds(65) then break; end      
+    end
+  end
+
+
   local function add_traps()
-    -- TODO
+    local make_prob = style_sel("traps", 0, 30, 60, 95)
+
+make_prob = 100  --!!!!! TEST
+
+    if make_prob == 0 then
+      gui.printf("Traps: skipped for level (by style).\n")
+      return
+    end
+
+    collect_cage_seeds()
+
+    table.append(junk_list, other_list)
+
+    rand.shuffle(junk_list)
+
+    each goal in R.goals do
+      if rand.odds(make_prob) then
+        try_trapify_important(goal)
+      end
+    end
   end
 
 
