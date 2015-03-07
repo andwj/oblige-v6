@@ -1877,9 +1877,8 @@ function Room_border_up()
     if R.quest.kind == "secret" then return 80 end
 
     if LEVEL.num_logos < 1 then return 80 end
-    if LEVEL.num_logos < 2 then return 20 end
 
-    return 2
+    return 5
   end
 
 
