@@ -40,7 +40,7 @@ PREFABS.Logo_Pill =
 
 PREFABS.Logo_Neon =
 {
-  file   = "wall/pic_128x128.wad"
+  file   = "wall/pic_128x128_b.wad"
   where  = "edge"
   long   = 192
   deep   = 16
@@ -52,7 +52,7 @@ PREFABS.Logo_Neon =
   bound_z1 = 0
   bound_z2 = 176
 
-  prob = 150
+  prob = 200
 
   tex_ZZWOLF7 = "O_NEON"
 }

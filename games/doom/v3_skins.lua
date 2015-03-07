@@ -5,7 +5,7 @@ V3_THEME_DEFAULTS =
 
   lifts = { shiny=20, platform=10, rusty=30 }
 
-  logos = { carve=50, pill=50, neon=50 }
+  logos = { carve=50, pill=50, neon=200 }
 
   crates = { crate1=50, crate2=50, }
 
