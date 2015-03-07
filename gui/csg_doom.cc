@@ -1463,6 +1463,8 @@ static csg_property_set_c * DM_FindSpecial(snag_c *S, region_c *R1, region_c *R2
 	// we want the brushes for the floor or ceiling next to a linedef
 	// to take precedence over any other brushes.  Hence the passes.
 
+	// Note: ignoring TRIGGER brushes here (they are found separately)
+
 	for (int pass = 0 ; pass < 4 ; pass++)
 	{
 		int side = pass & 1;
@@ -1483,12 +1485,14 @@ static csg_property_set_c * DM_FindSpecial(snag_c *S, region_c *R1, region_c *R2
 
 			V = test_S->FindBrushVert(test_R->gaps.front()->bottom);
 
-			if (V && V->face.getStr("special"))
+			if (V && V->face.getStr("special") &&
+				V->parent->bkind != BKIND_Trigger)
 				return &V->face;
 
 			V = test_S->FindBrushVert(test_R->gaps.back()->top);
 
-			if (V && V->face.getStr("special"))
+			if (V && V->face.getStr("special") &&
+				V->parent->bkind != BKIND_Trigger)
 				return &V->face;
 		}
 		else
@@ -1498,7 +1502,8 @@ static csg_property_set_c * DM_FindSpecial(snag_c *S, region_c *R1, region_c *R2
 			{
 				V = test_S->sides[i];
 
-				if (V && V->face.getStr("special"))
+				if (V && V->face.getStr("special") &&
+					V->parent->bkind != BKIND_Trigger)
 					return &V->face;
 			}
 		}
@@ -1641,8 +1646,8 @@ static void DM_MakeLine(region_c *R, snag_c *S)
 	int rail_side = 0;
 	brush_vert_c *rail = DM_FindRail(S, R, N, &rail_side);
 
-	csg_property_set_c *spec = DM_FindSpecial(S, R, N);
 	csg_property_set_c *trig = DM_FindTrigger(S, front, back);
+	csg_property_set_c *spec = DM_FindSpecial(S, R, N);
 
 	bool use_trig = false;
 
