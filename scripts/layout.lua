@@ -1714,9 +1714,13 @@ function Layout_traps_and_cages(R)
 
 
   local function make_trap(goal, loc, trigger)
+    local S = loc.S
+
     S.trap_z   = loc.z
     S.trap_dir = loc.dir
     S.trap_trigger = trigger
+
+    R.trap_count = (R.trap_count or 0) + 1
   end
 
 
@@ -1728,21 +1732,16 @@ function Layout_traps_and_cages(R)
       return false
     end
 
----??   -- less chance for mere items
----??   if (goal.kind == "WEAPON" or goal.kind == "ITEM") and rand.odds(35) then
----??     return false
----??   end
- 
+    local is_minor = (goal.kind == "WEAPON" or goal.kind == "ITEM")
+
     cur_goal = goal
 
     collect_seeds("trap")
 
-stderrf("Trap in %s : %d possible\n", R:tostr(), #junk_list)
-
     if table.empty(junk_list) then
       return false
     end
-    
+
     -- OK --
 
     local TRIGGER =
@@ -1754,14 +1753,21 @@ stderrf("Trap in %s : %d possible\n", R:tostr(), #junk_list)
 
     goal.S.trigger = TRIGGER
 
-    -- FIXME : decide how many to use !!!!
+    -- place the monster closets
 
-    while not table.empty(junk_list) do
+    rand.shuffle(junk_list)
+    
+    local usage = rand.pick({ 30, 60, 90 })
+    local count = rand.int(#junk_list * usage / 100)
+
+    count = math.clamp(1, count, 8)
+
+    for i = 1, count do
       local loc = table.remove(junk_list, 1)
 
-      make_trap(goal, loc, TRIGGER)
+      if not loc then break; end
 
-      if rand.odds(50) then break; end      
+      make_trap(goal, loc, TRIGGER)
     end
 
     return true
@@ -1769,9 +1775,7 @@ stderrf("Trap in %s : %d possible\n", R:tostr(), #junk_list)
 
 
   local function add_traps()
-    local make_prob = style_sel("traps", 0, 30, 60, 95)
-
-make_prob = 100  --!!!!! TEST
+    local make_prob = style_sel("traps", 0, 35, 65, 95)
 
     if make_prob == 0 then
       gui.printf("Traps: skipped for level (by style).\n")
