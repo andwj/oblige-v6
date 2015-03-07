@@ -52,7 +52,7 @@ PREFABS.Logo_Neon =
   bound_z1 = 0
   bound_z2 = 176
 
-  prob = 200
+  prob = 300
 
   tex_ZZWOLF7 = "O_NEON"
 }
