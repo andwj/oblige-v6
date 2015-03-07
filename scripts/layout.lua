@@ -4,7 +4,7 @@
 --
 --  Oblige Level Maker
 --
---  Copyright (C) 2006-2014 Andrew Apted
+--  Copyright (C) 2006-2015 Andrew Apted
 --
 --  This program is free software; you can redistribute it and/or
 --  modify it under the terms of the GNU General Public License
@@ -1554,7 +1554,7 @@ end
 
 
 
-function Layout_add_cages(R)
+function Layout_traps_and_cages(R)
   local  junk_list = {}
   local other_list = {}
 
@@ -1629,6 +1629,49 @@ function Layout_add_cages(R)
   end
 
 
+  local function add_cages()
+    -- style check...
+    local prob = style_sel("cages", 0, 20, 50, 90)
+
+    if not rand.odds(prob) then return end
+
+    if rand.odds(50)then
+      -- try verticals before horizontals (for symmetry)
+      DIR_LIST = { 2,8,4,6 }
+    else
+      DIR_LIST = { 6,4,8,2 }
+    end
+
+    collect_cage_seeds()
+
+    -- either use the junked seeds OR the solid-room-fab seeds
+    local list
+
+    if #junk_list > 0 and #other_list > 0 then
+      list = rand.sel(35, junk_list, other_list)
+    elseif #junk_list > 0 then
+      list = junk_list
+    else
+      list = other_list
+    end
+
+    -- rarely use ALL the junked seeds
+    local limited
+    if list == junk_list and
+       rand.odds(sel(STYLE.cages == "heaps", 50, 80))
+    then
+      limited = true
+    end
+
+    convert_list(list, limited)
+  end
+
+
+  local function add_traps()
+    -- TODO
+  end
+
+
   ---| Layout_add_cages |---
 
   -- never add cages to a start room
@@ -1637,40 +1680,10 @@ function Layout_add_cages(R)
   -- or rarely in secrets
   if R.quest.kind == "secret" and rand.odds(90) then return end
 
-  -- style check...
-  local prob = style_sel("cages", 0, 20, 50, 90)
 
-  if not rand.odds(prob) then return end
+  add_traps()
 
-  if rand.odds(50)then
-    -- try verticals before horizontals (for symmetry)
-    DIR_LIST = { 2,8,4,6 }
-  else
-    DIR_LIST = { 6,4,8,2 }
-  end
-
-  collect_cage_seeds()
-
-  -- either use the junked seeds OR the solid-room-fab seeds
-  local list
-
-  if #junk_list > 0 and #other_list > 0 then
-    list = rand.sel(35, junk_list, other_list)
-  elseif #junk_list > 0 then
-    list = junk_list
-  else
-    list = other_list
-  end
-
-  -- rarely use ALL the junked seeds
-  local limited
-  if list == junk_list and
-     rand.odds(sel(STYLE.cages == "heaps", 50, 80))
-  then
-    limited = true
-  end
-
-  convert_list(list, limited)
+  add_cages()
 end
 
 
@@ -3721,7 +3734,7 @@ gui.debugf("  ENTRY_H %d from %s\n", entry_h, R.entry_conn:tostr())
 
   Layout_add_bridges(R)
 
-  Layout_add_cages(R)
+  Layout_traps_and_cages(R)
 end
 
 
