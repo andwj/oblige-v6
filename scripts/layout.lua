@@ -1670,8 +1670,35 @@ function Layout_traps_and_cages(R)
   end
 
 
-  local function make_trap(goal, S, trigger)
-    -- FIXME
+  local function determine_trap_face_dir(goal, S)
+    local dx = goal.S.sx - S.sx
+    local dy = goal.S.sy - S.sy
+    local dir
+
+    if math.abs(dx) > math.abs(dy) then
+      dir = sel(dx < 0, 6, 4)
+    else
+      dir = sel(dy < 0, 2, 8)
+    end
+
+    return dir
+  end
+
+
+  local function make_trap(goal, loc, trigger)
+    local S   = loc.S
+    local dir = determine_trap_face_dir(goal, S)
+
+    local N = S:neighbor(dir)
+
+    if N and N.room == R and N.floor_h then
+      S.trap_z = N.floor_h
+    else
+      S.trap_z = loc.z
+    end
+
+    S.trap_dir = dir
+    S.trap_trigger = trigger
   end
 
 
@@ -1705,12 +1732,12 @@ function Layout_traps_and_cages(R)
     goal.S.trigger = TRIGGER
 
 
-    while true do
-      local S = table.remove(junk_list, 1)
+    while not table.empty(junk_list) do
+      local loc = table.remove(junk_list, 1)
 
-      make_trap(goal, S, trigger)
+      make_trap(goal, loc, TRIGGER)
 
-      if rand.odds(65) then break; end      
+      if rand.odds(50) then break; end      
     end
   end
 

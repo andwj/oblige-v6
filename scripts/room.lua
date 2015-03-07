@@ -4,7 +4,7 @@
 --
 --  Oblige Level Maker
 --
---  Copyright (C) 2006-2014 Andrew Apted
+--  Copyright (C) 2006-2015 Andrew Apted
 --
 --  This program is free software; you can redistribute it and/or
 --  modify it under the terms of the GNU General Public License
@@ -3690,6 +3690,20 @@ function Room_build_seeds(R)
   end
 
 
+  local function do_fat_trap(S, w_tex)
+    local def = PREFABS["Trap_fat"]
+    assert(def)
+
+    local skin1 = { wall=w_tex }
+
+    skin1.tag = S.trap_trigger.tag
+
+    local T = Trans.box_transform(S.x1, S.y1, S.x2, S.y2, S.trap_z, S.trap_dir)
+
+    Fabricate(R, def, T, { skin1 })
+  end
+
+
   local function do_fat_cage(S, w_tex)
     local def = PREFABS["Cage_fat"]
     assert(def)
@@ -4468,7 +4482,9 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
         w_tex = R.corner_mat
       end
 
-      if S.cage_dir then
+      if S.trap_dir then
+        do_fat_trap(S, w_tex)
+      elseif S.cage_dir then
         do_fat_cage(S, w_tex)
       else
         Trans.old_quad(get_mat(w_tex), S.x1,S.y1, S.x2,S.y2, -EXTREME_H, EXTREME_H);
