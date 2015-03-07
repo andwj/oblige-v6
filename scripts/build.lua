@@ -901,6 +901,25 @@ function brushlib.bbox(brush)
 end
 
 
+function brushlib.set_kind(brush, kind, props)
+  -- remove any existing kind
+  for i = 1, #brush do
+    if brush[i].m then
+      table.remove(brush, i)
+      break;
+    end
+  end
+
+  local C = { m=kind }
+
+  if props then
+    table.merge(C, props)
+  end
+
+  table.insert(brush, 1, C)
+end
+
+
 function brushlib.add_top(brush, z, mat)
   -- Note: assumes brush has no top already!
 
