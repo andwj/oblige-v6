@@ -1568,6 +1568,10 @@ function Monsters_in_room(R)
     if R.final_battle then
       qty = qty * 2.2
 
+    -- make in quiet in rooms with many traps 
+    elseif R.trap_ratio and R.trap_ratio > rand.range(0.3, 0.6) then
+      qty = qty * 0.3
+
     -- after the big battle, give player a breather
     elseif R.cool_down then
       qty = qty * 0.7
