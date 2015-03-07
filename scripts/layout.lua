@@ -1559,8 +1559,11 @@ function Layout_traps_and_cages(R)
   local other_list
 
   local DIR_LIST
+  
+  local cur_goal
 
-  local function test_seed(S)
+
+  local function test_cage_seed(S)
     local best_dir
     local best_z
 
@@ -1598,7 +1601,43 @@ function Layout_traps_and_cages(R)
   end
 
 
-  local function collect_cage_seeds()
+  local function test_trap_seed(S)
+    local best_dir
+    local best_z
+
+    -- only choose directions which face the important
+    DIR_LIST = {}
+
+    if S.sx < cur_goal.S.sx then table.insert(DIR_LIST, 6) end
+    if S.sx > cur_goal.S.sx then table.insert(DIR_LIST, 4) end
+
+    if S.sy < cur_goal.S.sy then table.insert(DIR_LIST, 8) end
+    if S.sy > cur_goal.S.sy then table.insert(DIR_LIST, 2) end
+
+    rand.shuffle(DIR_LIST)
+
+    each dir in DIR_LIST do
+      local N = S:neighbor(dir)
+
+      if not (N and N.room == R) then continue end
+
+      if N.kind != "walk" then continue end
+      if N.content then continue end
+      if not N.floor_h then continue end
+
+      best_dir = dir
+      best_z   = N.floor_h
+    end
+
+    if best_dir then
+      local LOC = { S=S, dir=best_dir, z=best_z }
+
+      table.insert(junk_list, LOC)
+    end
+  end
+
+
+  local function collect_seeds(mode)
      junk_list = {}
     other_list = {}
 
@@ -1610,8 +1649,12 @@ function Layout_traps_and_cages(R)
     
       if S.kind != "void" then continue end
 
-      test_seed(S)
-    end
+      if mode == "cage" then
+        test_cage_seed(S)
+      else
+        test_trap_seed(S)
+      end
+    end -- x, y
     end
   end
 
@@ -1645,7 +1688,7 @@ function Layout_traps_and_cages(R)
       DIR_LIST = { 6,4,8,2 }
     end
 
-    collect_cage_seeds()
+    collect_seeds("cage")
 
     -- either use the junked seeds OR the solid-room-fab seeds
     local list
@@ -1670,34 +1713,9 @@ function Layout_traps_and_cages(R)
   end
 
 
-  local function determine_trap_face_dir(goal, S)
-    local dx = goal.S.sx - S.sx
-    local dy = goal.S.sy - S.sy
-    local dir
-
-    if math.abs(dx) > math.abs(dy) then
-      dir = sel(dx < 0, 6, 4)
-    else
-      dir = sel(dy < 0, 2, 8)
-    end
-
-    return dir
-  end
-
-
   local function make_trap(goal, loc, trigger)
-    local S   = loc.S
-    local dir = determine_trap_face_dir(goal, S)
-
-    local N = S:neighbor(dir)
-
-    if N and N.room == R and N.floor_h then
-      S.trap_z = N.floor_h
-    else
-      S.trap_z = loc.z
-    end
-
-    S.trap_dir = dir
+    S.trap_z   = loc.z
+    S.trap_dir = loc.dir
     S.trap_trigger = trigger
   end
 
@@ -1710,14 +1728,19 @@ function Layout_traps_and_cages(R)
       return false
     end
 
-    -- less chance for mere items
-    if (goal.kind == "WEAPON" or goal.kind == "ITEM") and
-       rand.odds(40 * 0) then
-      return false
-    end
+---??   -- less chance for mere items
+---??   if (goal.kind == "WEAPON" or goal.kind == "ITEM") and rand.odds(35) then
+---??     return false
+---??   end
  
+    cur_goal = goal
+
+    collect_seeds("trap")
+
+stderrf("Trap in %s : %d possible\n", R:tostr(), #junk_list)
+
     if table.empty(junk_list) then
-      return
+      return false
     end
     
     -- OK --
@@ -1731,6 +1754,7 @@ function Layout_traps_and_cages(R)
 
     goal.S.trigger = TRIGGER
 
+    -- FIXME : decide how many to use !!!!
 
     while not table.empty(junk_list) do
       local loc = table.remove(junk_list, 1)
@@ -1739,6 +1763,8 @@ function Layout_traps_and_cages(R)
 
       if rand.odds(50) then break; end      
     end
+
+    return true
   end
 
 
@@ -1751,14 +1777,6 @@ make_prob = 100  --!!!!! TEST
       gui.printf("Traps: skipped for level (by style).\n")
       return
     end
-
-    DIR_LIST = { 2,4,6,8 }
-
-    collect_cage_seeds()
-
-    table.append(junk_list, other_list)
-
-    rand.shuffle(junk_list)
 
     each goal in R.goals do
       if rand.odds(make_prob) then
