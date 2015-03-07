@@ -4,11 +4,20 @@ CHANGES IN 6.20 (since 6.10)
 
 +  new Gameplay Tweaks module
 
++  new "Easier" and "Harder" settings for monster strength
+
++  new "Episodic" setting for monster amount and level size
+
++  finer control over Outdoors, Caves and all level styles
+   with new "Rare", "Less" and "More" settings
+
+!  removed "Always" setting for Caves and Outdoors
 
 -  better monster selection via new 'min_weapon' field
 
--  finer control over Outdoors, Caves and all level styles
-   with new "Rare", "Less" and "More" settings
-
 -  ability to set the random seed
+
+-  fixed error when all monsters in control module are "None"
+-  fixed map header lumps having size 1 instead of 0
+-  fixed creating "arch with step" when steepness == NONE
 
