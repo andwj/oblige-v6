@@ -2341,6 +2341,9 @@ public:
 
 		L->flags |= MLF_BlockAll | MLF_DontDraw;
 
+		if (front > 0 && back > 0)
+			L->flags |= MLF_TwoSided;
+
 		L->front = MakeSidedef(front, index);
 		L->back  = MakeSidedef(back,  index);
 
