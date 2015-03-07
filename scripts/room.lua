@@ -1873,16 +1873,26 @@ function Room_border_up()
   end
 
 
+  local function chance_for_logo(R)
+    if R.quest.kind == "secret" then return 80 end
+
+    if LEVEL.num_logos < 1 then return 80 end
+    if LEVEL.num_logos < 2 then return 20 end
+
+    return 2
+  end
+
+
   local function select_picture(R, z_space, index)
-    z_space = z_space - 16
+    z_space = z_space - 8
     -- FIXME: needs more z_space checking
 
     if not THEME.logos then
       error("Game is missing logo skins")
     end
 
-    if rand.odds(sel(LEVEL.has_logo,7,40)) then
-      LEVEL.has_logo = true
+    if rand.odds(chance_for_logo(R)) then
+      LEVEL.num_logos = LEVEL.num_logos + 1
       return rand.key_by_probs(collect_usable_pictures(z_space, "logo"))
     end
 
@@ -2023,6 +2033,8 @@ function Room_border_up()
   make_outdoor_corners()
 
   widen_arches()
+
+  LEVEL.num_logos = 0
 
   each R in LEVEL.rooms do
     decide_windows( R, get_border_list(R))
