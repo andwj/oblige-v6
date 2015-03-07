@@ -109,6 +109,7 @@ function ROOM_CLASS.new()
     exclusions = {}
     neighbors = {}
 
+    num_traps = 0
     hazard_health = 0
   }
 

@@ -1720,7 +1720,7 @@ function Layout_traps_and_cages(R)
     S.trap_dir = loc.dir
     S.trap_trigger = trigger
 
-    R.trap_count = (R.trap_count or 0) + 1
+    R.num_traps = R.num_traps + 1
   end
 
 
@@ -1787,6 +1787,8 @@ function Layout_traps_and_cages(R)
         try_trapify_important(goal)
       end
     end
+
+    R.trap_ratio = R.num_traps / (R.sw + R.sh)
   end
 
 
