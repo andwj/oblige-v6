@@ -74,10 +74,10 @@ OB_MODULES["level_control"] =
     switches    = { label="Switched Doors", choices=LEVEL_CONTROL.CHOICES }
     symmetry    = { label="Symmetry",       choices=LEVEL_CONTROL.CHOICES }
     teleporters = { label="Teleporters",    choices=LEVEL_CONTROL.CHOICES }
+    traps       = { label="Traps",          choices=LEVEL_CONTROL.CHOICES }
     windows     = { label="Windows",        choices=LEVEL_CONTROL.CHOICES }
 
 --  closets     = { label="Closets",        choices=LEVEL_CONTROL.CHOICES }
---  traps       = { label="Traps",          choices=LEVEL_CONTROL.CHOICES }
 --  barrels     = { label="Barrels",        choices=LEVEL_CONTROL.CHOICES }
 --  bridges     = { label="3D Bridges",     choices=LEVEL_CONTROL.CHOICES }
 --  big_juncs   = { label="Big Junctions",  choices=LEVEL_CONTROL.CHOICES }
