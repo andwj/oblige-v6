@@ -4,6 +4,8 @@ CHANGES IN 6.20 (since 6.10)
 
 +  new Gameplay Tweaks module
 
++  some simple monster closets
+
 +  new "Easier" and "Harder" settings for monster strength
 
 +  new "Episodic" setting for monster amount and level size
