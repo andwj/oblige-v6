@@ -19,6 +19,8 @@ CHANGES IN 6.20 (since 6.10)
 
 -  ability to set the random seed
 
+-  water is no longer damaging
+
 -  fixed error when all monsters in control module are "None"
 -  fixed map header lumps having size 1 instead of 0
 -  fixed creating "arch with step" when steepness == NONE
