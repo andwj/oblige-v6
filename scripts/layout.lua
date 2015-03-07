@@ -1699,7 +1699,7 @@ function Layout_traps_and_cages(R)
     {
       r = 64
       special = 109  -- W1 : open and stay /fast
-      tag = alloc_id("tag")
+      tag = Plan_alloc_id("tag")
     }
 
     goal.S.trigger = TRIGGER
@@ -1724,6 +1724,8 @@ make_prob = 100  --!!!!! TEST
       gui.printf("Traps: skipped for level (by style).\n")
       return
     end
+
+    DIR_LIST = { 2,4,6,8 }
 
     collect_cage_seeds()
 
