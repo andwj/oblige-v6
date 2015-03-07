@@ -23,7 +23,7 @@
 
 #define OBLIGE_TITLE  "OBLIGE Level Maker"
 
-#define OBLIGE_VERSION  "6.20"
+#define OBLIGE_VERSION  "6.20-RC1"
 #define OBLIGE_HEX_VER  0x620
 
 
@@ -65,7 +65,11 @@ extern bool debug_messages;
 extern bool fast_lighting;
 
 
+#ifdef __GNUC__
+__attribute__((noreturn))
+#endif
 void Main_FatalError(const char *msg, ...);
+
 void Main_ProgStatus(const char *msg, ...);
 bool Main_BackupFile(const char *filename, const char *ext);
 void Main_Ticker();
