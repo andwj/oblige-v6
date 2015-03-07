@@ -143,7 +143,7 @@ function Plan_determine_size()
 
   -- there is no real "progression" when making a single level.
   -- hence use mixed mode instead.
-  if ob_size == "prog" and OB_CONFIG.length == "single" then
+  if (ob_size == "prog" or ob_size == "epi") and OB_CONFIG.length == "single" then
     ob_size = "mixed"
   end
 
@@ -153,8 +153,10 @@ function Plan_determine_size()
 
     if W < H then W, H = H, W end
 
-  elseif ob_size == "prog" then
-    local n = 1 + LEVEL.ep_along * 8.9
+  elseif ob_size == "prog" or ob_size == "epi" then
+    local along = sel(ob_size == "epi", LEVEL.ep_along, LEVEL.game_along)
+
+    local n = 1 + along * 8.9
 
     n = int(n)
     if n < 1 then n = 1 end

@@ -4,7 +4,7 @@
 //
 //  Oblige Level Maker
 //
-//  Copyright (C) 2006-2014 Andrew Apted
+//  Copyright (C) 2006-2015 Andrew Apted
 //
 //  This program is free software; you can redistribute it and/or
 //  modify it under the terms of the GNU General Public License
@@ -180,7 +180,7 @@ void UI_Level::Defaults()
 {
 	// Note: theme handled by LUA code (ob_init)
 
-	ParseValue("size",     "prog");
+	ParseValue("size",     "epi");
 	ParseValue("outdoors", "mixed");
 	ParseValue("caves",    "mixed");
 }
@@ -226,6 +226,7 @@ const char * UI_Level::size_syms[] =
 	"extreme", "Extreme",
 
 	"prog",    "Progressive",
+	"epi",     "Episodic",
 	"mixed",   "Mix It Up",
 
 	NULL, NULL
