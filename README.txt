@@ -1,8 +1,8 @@
 
-OBLIGE 6.10-RC1
-===============
+OBLIGE 6.20
+===========
 
-by Andrew Apted.  July 2014
+by Andrew Apted.  March 2015
 
 
 INTRODUCTION

@@ -4,11 +4,11 @@ CHANGES IN 6.20 (since 6.10)
 
 +  new Gameplay Tweaks module
 
-+  some simple monster closets
++  added some basic monster closets
 
 +  new "Easier" and "Harder" settings for monster strength
 
-+  new "Episodic" setting for monster amount and level size
++  new "Episodic" setting for monster quantity and level size
 
 +  finer control over Outdoors, Caves and all level styles
    with new "Rare", "Less" and "More" settings
@@ -16,9 +16,7 @@ CHANGES IN 6.20 (since 6.10)
 !  removed "Always" setting for Caves and Outdoors
 
 -  better monster selection via new 'min_weapon' field
-
 -  ability to set the random seed
-
 -  water is no longer damaging
 
 -  fixed error when all monsters in control module are "None"
