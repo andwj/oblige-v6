@@ -46,8 +46,7 @@ cp -av modules/*.* $dest/modules
 #
 #  Game data
 #
-# FIXME !!!!
-svn export games $dest/games
+cp -a games $dest/games
 
 #
 #  Data files

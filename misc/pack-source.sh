@@ -63,8 +63,7 @@ mkdir $dest/obj_win32/ajpoly
 #
 #  Game data
 #
-# FIXME !!!!
-svn export games $dest/games
+cp -a games $dest/games
 
 #
 #  Data files
