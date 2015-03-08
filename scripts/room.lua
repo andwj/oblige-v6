@@ -4168,7 +4168,9 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     local mode = sel(z1 > z2, "niche", "outie")
     local top_z
 
-    if diff_z > 96 then
+    if diff_z >= 96 and diff_z <= 144 and OB_CONFIG.mode == "coop" then
+      top_z = 96 ; fab_name = "Stair_".. mode .. "_96"
+    elseif diff_z > 96 then
       top_z = 96 ; fab_name = "Lift_" .. mode
     elseif diff_z >= 56 then
       top_z = 56 ; fab_name = "Stair_".. mode .. "_56"
