@@ -154,7 +154,7 @@ function Plan_determine_size()
     if W < H then W, H = H, W end
 
   elseif ob_size == "prog" or ob_size == "epi" then
-    local along = sel(ob_size == "epi", LEVEL.ep_along, LEVEL.game_along)
+    local along = sel(ob_size == "epi", LEVEL.ep_along, LEVEL.game_along ^ 0.66)
 
     local n = 1 + along * 8.9
 
@@ -162,7 +162,7 @@ function Plan_determine_size()
     if n < 1 then n = 1 end
     if n > 9 then n = 9 end
 
-    local WIDTHS  = { 3,3,4, 5,5,6, 6,7,7 }
+    local WIDTHS  = { 3,4,5, 5,5,6, 6,7,7 }
     local HEIGHTS = { 2,3,3, 3,4,4, 5,5,6 }
 
     W = WIDTHS[n]
