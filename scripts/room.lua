@@ -4212,8 +4212,35 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
 
 
   local function diag_get_neighbor_info(S, dir)
-    -- FIXME  
-    return { kind="solid" }
+    local N = S:neighbor(dir)
+
+    if not (N and N.room and N.room == S.room) then
+      return { kind="solid" }
+    end
+
+    if N.kind == "void" or not N.floor_h then
+      return { kind="solid" }
+    end
+
+    local info = { kind=N.kind }
+
+    info.floor_h = N.floor_h
+    info.ceil_h  = N.ceil_h or R.ceil_h or (info.floor_h + 256)
+
+    if info.kind == "stair" then
+      local K = S.chunk[1]
+      if K and K.src_floor and K.dest_floor then
+        local z1 = K. src_floor.floor_h
+        local z2 = K.dest_floor.floor_h
+
+        info.floor_h = math.max(z1, z2)
+      end
+    end
+
+    info.floor_mat = N.f_tex or sel(N.kind == "liquid", "_LIQUID", R.main_tex)
+    info.ceil_mat  = N.c_tex or sel(R.is_outdoor,       "_SKY",    R.ceil_tex)
+
+    return info
   end
 
 
@@ -4227,15 +4254,51 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     if info1.floor_h > info2.floor_h then return info1 end
     if info2.floor_h > info1.floor_h then return info2 end
 
-    if info1.ceil_h < info2.ceil_h then return info1 end
-    if info2.ceil_h < info1.ceil_h then return info2 end
+    -- oddly, picking the highest ceiling seems to work best
+    if info1.ceil_h > info2.ceil_h then return info1 end
+    if info2.ceil_h > info1.ceil_h then return info2 end
     
     return info1
   end
 
 
   local function build_diag_half(S, dir, info, w_tex)
-    -- FIXME  
+    local f_brush =
+    {
+      { x=S.x1, y=S.y1 }
+      { x=S.x2, y=S.y1 }
+      { x=S.x2, y=S.y2 }
+      { x=S.x1, y=S.y2 }
+    }
+
+    if dir == 3 then
+      table.remove(f_brush, 4)
+    elseif dir == 7 then
+      table.remove(f_brush, 2)
+    elseif dir == 1 then
+      table.remove(f_brush, 3)
+    elseif dir == 9 then
+      table.remove(f_brush, 1)
+    else
+      error("Invalid diagonal seed!")
+    end
+
+    if info.kind == "solid" then
+      brushlib.set_mat(f_brush, w_tex)
+      Trans.brush(f_brush)
+      return
+    end
+
+    local c_brush = table.copy(f_brush)
+
+    brushlib.add_top   (f_brush, info.floor_h)
+    brushlib.add_bottom(c_brush, info.ceil_h)
+
+    brushlib.set_mat(f_brush, info.floor_mat, info.floor_mat)
+    brushlib.set_mat(c_brush, info. ceil_mat, info. ceil_mat)
+
+    Trans.brush(f_brush)
+    Trans.brush(c_brush)
   end
 
 
