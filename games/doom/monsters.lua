@@ -274,7 +274,7 @@ DOOM2.MONSTERS =
     damage = 20
     attack = "missile"
     density = 0.5
-    min_weapon = 3
+    min_weapon = 2
     room_size = "large"
   }
 
@@ -288,7 +288,7 @@ DOOM2.MONSTERS =
     health = 500
     damage = 15
     attack = "missile"
-    min_weapon = 1
+    min_weapon = 2
     density = 0.7
     room_size = "medium"
   }
