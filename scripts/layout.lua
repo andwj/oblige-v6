@@ -44,12 +44,11 @@ function Layout_parse_char(ch)
   if ch == 'e' then return { kind="sub_area", area=5 } end
   if ch == 'f' then return { kind="sub_area", area=6 } end
 
-  -- diagonals : can be curved, so 'dir' is towards the more open space
--- FIXME !!!!!! diagonal
-  if ch == '/' then return { kind="solid", dir=3 } end
-  if ch == '%' then return { kind="solid", dir=1 } end
-  if ch == 'N' then return { kind="solid", dir=9 } end
-  if ch == 'Z' then return { kind="solid", dir=7 } end
+  -- diagonals : might be curved, so 'dir' is towards the more open space
+  if ch == '/' then return { kind="diagonal", dir=3 } end
+  if ch == '%' then return { kind="diagonal", dir=1 } end
+  if ch == 'N' then return { kind="diagonal", dir=9 } end
+  if ch == 'Z' then return { kind="diagonal", dir=7 } end
 
   -- straight stairs
   if ch == '<' then return { kind="stair", dir=4 } end
@@ -1648,6 +1647,7 @@ function Layout_traps_and_cages(R)
       if S.room != R then continue end
     
       if S.kind != "void" then continue end
+      if S.is_diagonal then continue end
 
       if mode == "cage" then
         test_cage_seed(S)
@@ -2027,13 +2027,14 @@ end
   end
 
 
-  local function setup_solid(S, pat, solid_tex)
+  local function setup_solid(S, pat, solid_tex, is_diagonal)
     assert(not S.conn)
 
     S.kind = "void"
     S.w_tex = solid_tex  -- can be NIL
+    S.is_diagonal = is_diagonal
 
-    if pat.solid_feature and R.use_solid_feature then 
+    if pat.solid_feature and R.use_solid_feature and not is_diagonal then 
       S.solid_feature = true
     end
   end
@@ -2403,7 +2404,7 @@ end
     end
 
     -- in outdoor rooms, a solid at edge of pattern must touch a building
-    if P.kind == "solid" and R.is_outdoor and
+    if R.is_outdoor and (P.kind == "solid" or P.kind == "diagonal") and
        (px == 1 or px == pat._structure.w or
         py == 1 or py == pat._structure.h)
     then
@@ -2508,6 +2509,14 @@ end
       CHUNK.dir = transform_dir(T, P.dir)
     end
 
+    if P.kind == "diagonal" then
+      CHUNK.kind = "solid"
+
+      if R.use_diagonals then
+        CHUNK.is_diagonal = true
+      end
+    end
+
     if P.kind == "stair" then
       assert(CHUNK.dir)
 
@@ -2561,7 +2570,7 @@ end
     -- touching building
     local solid_tex
 
-    if P.kind == "solid" and R.is_outdoor and
+    if R.is_outdoor and (P.kind == "solid" or P.kind == "diagonal") and
        (px == 1 or px == pat._structure.w or
         py == 1 or py == pat._structure.h)
     then
@@ -2598,8 +2607,8 @@ end
       if P.kind == "liquid" then
         setup_liquid(S)
 
-      elseif P.kind == "solid" then
-        setup_solid(S, pat, solid_tex)
+      elseif CHUNK.kind == "solid" then
+        setup_solid(S, pat, solid_tex, CHUNK.is_diagonal)
 
       elseif P.kind == "stair" then
         S.kind = "stair"
@@ -3624,6 +3633,8 @@ gui.debugf("(skip SUB_%s : no entry_vhr)\n", tostring(A.id))
     R.entry_vhr = 5
 
     R.use_solid_feature = rand.odds(75) and (not R.is_outdoor)
+
+    R.use_diagonals = rand.odds(30 + 70)  --!!!!!!
 
     -- create intiial area
     local AREA =
