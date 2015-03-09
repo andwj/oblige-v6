@@ -4254,21 +4254,37 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
   end
 
 
-  local function diag_select_from_pair(info1, info2)
-    if info1.kind == "solid" then return info1 end
-    if info2.kind == "solid" then return info2 end
+  local function diag_select_from_pair(D1, D2)
+    if D1.kind == "solid" then return D1 end
+    if D2.kind == "solid" then return D2 end
 
-    if info1.kind == "liquid" then return info2 end
-    if info2.kind == "liquid" then return info1 end
+    if D1.kind == "liquid" then return D2 end
+    if D2.kind == "liquid" then return D1 end
 
-    if info1.floor_h > info2.floor_h then return info1 end
-    if info2.floor_h > info1.floor_h then return info2 end
+    local info = { kind="normal" }
+
+    if D2.floor_h > D1.floor_h or D1.kind == "stair" then
+      info.floor_h   = D2.floor_h
+      info.floor_mat = D2.floor_mat
+      info.lower_mat = D2.lower_mat
+    else
+      info.floor_h   = D1.floor_h
+      info.floor_mat = D1.floor_mat
+      info.lower_mat = D1.lower_mat
+    end
 
     -- oddly, picking the highest ceiling seems to work best
-    if info1.ceil_h > info2.ceil_h then return info1 end
-    if info2.ceil_h > info1.ceil_h then return info2 end
-    
-    return info1
+    if D2.ceil_h > D1.ceil_h then
+      info.ceil_h    = D2.ceil_h
+      info.ceil_mat  = D2.ceil_mat
+      info.upper_mat = D2.upper_mat
+    else
+      info.ceil_h    = D1.ceil_h
+      info.ceil_mat  = D1.ceil_mat
+      info.upper_mat = D1.upper_mat
+    end
+
+    return info
   end
 
 
