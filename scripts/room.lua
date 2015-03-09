@@ -3389,7 +3389,7 @@ function Room_build_seeds(R)
 
   local function content_very_big_item(S, item, z1, is_weapon)
     -- sometimes make a lowering pedestal
-    local prob = sel(is_weapon, 30, 15)
+    local prob = sel(is_weapon, 25, 10)
 
     local mx, my = S:mid_point()
 
@@ -4168,7 +4168,7 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     local mode = sel(z1 > z2, "niche", "outie")
     local top_z
 
-    if diff_z >= 96 and diff_z <= 144 and OB_CONFIG.mode == "coop" then
+    if diff_z >= 96 and diff_z <= 144 and R.use_ladders then
       top_z = 96 ; fab_name = "Stair_".. mode .. "_96"
     elseif diff_z > 96 then
       top_z = 96 ; fab_name = "Lift_" .. mode
@@ -4590,6 +4590,8 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
 
 
   ---==| Room_build_seeds |==---
+
+  R.use_ladders = (OB_CONFIG.mode == "coop" or rand.odds(10))
 
   if R.kind == "smallexit" then
     Room_do_small_exit(R)
