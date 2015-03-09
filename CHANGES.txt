@@ -15,6 +15,7 @@ CHANGES IN 6.20 (since 6.10)
 
 !  removed "Always" setting for Caves and Outdoors
 
+-  in co-op mode prefer steep stairs instead of lifts
 -  better monster selection via new 'min_weapon' field
 -  ability to set the random seed
 -  water is no longer damaging
