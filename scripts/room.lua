@@ -4231,7 +4231,7 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     info.ceil_mat  = N.c_tex or sel(R.is_outdoor,       "_SKY",    R.ceil_tex)
 
     -- these can be nil
-    info.lower_mat = N.l_tex
+    info.lower_mat = N.l_tex or N.w_tex or R.main_tex
     info.upper_mat = N.u_tex
 
     if info.kind == "stair" then
@@ -4263,7 +4263,7 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
 
     local info = { kind="normal" }
 
-    if D2.floor_h > D1.floor_h or D1.kind == "stair" then
+    if (D2.floor_h > D1.floor_h and D2.kind != "stair") or D1.kind == "stair" then
       info.floor_h   = D2.floor_h
       info.floor_mat = D2.floor_mat
       info.lower_mat = D2.lower_mat
@@ -4315,7 +4315,7 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
       return
     end
 
-    local c_brush = table.copy(f_brush)
+    local c_brush = brushlib.copy(f_brush)
 
     brushlib.add_top   (f_brush, info.floor_h)
     brushlib.add_bottom(c_brush, info.ceil_h)
