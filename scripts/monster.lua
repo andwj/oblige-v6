@@ -2031,7 +2031,9 @@ function Monsters_in_room(R)
     -- decide deafness and where to look
     local deaf, focus
 
-    if R.kind == "cave" or R.kind == "hallway" or info.float then
+    if is_cage then
+      def = false
+    elseif R.kind == "cave" or R.kind == "hallway" or info.float then
       deaf = rand.odds(65)
     elseif spot.ambush then
       deaf  = rand.odds(95)
