@@ -4561,28 +4561,6 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     if sides_only or R.sides_only then return end
 
 
----###    --- DIAGONALS (old code) ---
----###
----###    if S.kind == "diagonal" then
----###
----###      local diag_info = get_mat(w_tex, S.stuckie_ftex)
----###
----###      Build.diagonal(S, S.stuckie_side, diag_info, S.stuckie_z)
----###
----###      S.kind = assert(S.diag_new_kind)
----###
----###      if S.diag_new_z then
----###        S.floor_h = S.diag_new_z
----###        z1 = S.floor_h
----###      end
----###
----###      if S.diag_new_ftex then
----###        S.f_tex = S.diag_new_ftex
----###        f_tex = S.f_tex
----###      end
----###    end
-
-
     --- CEILING ---
 
     local cx1 = S.x1 + (c_indents[4] or 0)
