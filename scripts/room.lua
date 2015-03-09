@@ -4227,6 +4227,13 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     info.floor_h = N.floor_h
     info.ceil_h  = N.ceil_h or R.ceil_h or (info.floor_h + 256)
 
+    info.floor_mat = N.f_tex or sel(N.kind == "liquid", "_LIQUID", R.main_tex)
+    info.ceil_mat  = N.c_tex or sel(R.is_outdoor,       "_SKY",    R.ceil_tex)
+
+    -- these can be nil
+    info.lower_mat = N.l_tex
+    info.upper_mat = N.u_tex
+
     if info.kind == "stair" then
       local K = N.chunk[1]
       if K and K.src_floor and K.dest_floor then
@@ -4234,11 +4241,14 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
         local z2 = K.dest_floor.floor_h
 
         info.floor_h = math.max(z1, z2)
+
+        local tex1 = K. src_floor.floor_tex
+        local tex2 = K.dest_floor.floor_tex
+
+        if z1 > z2 and tex1 then info.floor_mat = tex1 end
+        if z2 > z1 and tex2 then info.floor_mat = tex2 end
       end
     end
-
-    info.floor_mat = N.f_tex or sel(N.kind == "liquid", "_LIQUID", R.main_tex)
-    info.ceil_mat  = N.c_tex or sel(R.is_outdoor,       "_SKY",    R.ceil_tex)
 
     return info
   end
@@ -4294,8 +4304,8 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     brushlib.add_top   (f_brush, info.floor_h)
     brushlib.add_bottom(c_brush, info.ceil_h)
 
-    brushlib.set_mat(f_brush, info.floor_mat, info.floor_mat)
-    brushlib.set_mat(c_brush, info. ceil_mat, info. ceil_mat)
+    brushlib.set_mat(f_brush, info.lower_mat or info.floor_mat, info.floor_mat)
+    brushlib.set_mat(c_brush, info.upper_mat or info. ceil_mat, info. ceil_mat)
 
     Trans.brush(f_brush)
     Trans.brush(c_brush)
