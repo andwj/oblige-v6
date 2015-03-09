@@ -38,7 +38,7 @@ V3_THEME_DEFAULTS =
 
   lowering_pedestal_skin =
   {
-    wall="WOOD3", floor="CEIL1_3"
+    wall="SW1METAL", floor="FLOOR4_8"
     x_offset=0, y_offset=0, peg=1
     line_kind=23
   }

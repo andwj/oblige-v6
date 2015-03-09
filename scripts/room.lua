@@ -3389,7 +3389,7 @@ function Room_build_seeds(R)
 
   local function content_very_big_item(S, item, z1, is_weapon)
     -- sometimes make a lowering pedestal
-    local prob = sel(is_weapon, 40, 20)
+    local prob = sel(is_weapon, 30, 15)
 
     local mx, my = S:mid_point()
 
