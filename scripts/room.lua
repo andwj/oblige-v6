@@ -4323,6 +4323,12 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     brushlib.set_mat(f_brush, info.lower_mat or info.floor_mat, info.floor_mat)
     brushlib.set_mat(c_brush, info.upper_mat or info. ceil_mat, info. ceil_mat)
 
+    -- UGH : shouldn't need to do this here
+    if info.floor_mat == "_LIQUID" and LEVEL.liquid then
+      f_brush[#f_brush].special = LEVEL.liquid.special
+      f_brush[#f_brush].light   = LEVEL.liquid.light
+    end
+
     if info.ceil_mat == "_SKY" then
       brushlib.set_kind(c_brush, "sky")
     end
