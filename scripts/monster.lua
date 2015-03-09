@@ -2621,7 +2621,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
         local info = assert(GAME.WEAPONS[name])
         assert(info.pref)
 
-        table.insert(list, { info=info, factor=0.35 })
+        table.insert(list, { info=info, factor=0.5 })
       end
       end
     end
@@ -2653,6 +2653,14 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
     heal_mul = heal_mul * (PARAM.health_factor or 1)
     ammo_mul = ammo_mul * (PARAM.ammo_factor or 1)
+
+    -- also when 'keep weapons' gameplay tweak is on, give less ammo in later maps
+    if PARAM.keep_weapons then
+      local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.8)
+      local factor = 1.0 - along * 0.5
+
+      ammo_mul = ammo_mul * factor
+    end
 
     if OB_CONFIG.mode == "coop" then
       heal_mul = heal_mul * COOP_HEALTH_FACTOR
