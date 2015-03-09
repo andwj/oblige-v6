@@ -4332,6 +4332,36 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
   end
 
 
+  local function diag_fill_wall_gaps(S, dir)
+    local N2 = not S:same_room(2)
+    local N4 = not S:same_room(4)
+    local N6 = not S:same_room(6)
+    local N8 = not S:same_room(8)
+
+    local walls = {}
+
+    walls[1] = N2 or N4
+    walls[3] = N2 or N6
+    walls[7] = N8 or N4
+    walls[9] = N8 or N6
+
+    each corner in geom.CORNERS do
+      if walls[corner] then
+        local x1, y1 = S.x1, S.y1
+        local x2, y2 = S.x2, S.y2
+
+        if corner == 1 or corner == 7 then x2 = x1 + 16 else x1 = x2 - 16 end
+        if corner == 1 or corner == 3 then y2 = y1 + 16 else y1 = y2 - 16 end
+
+        local brush = brushlib.quad(x1, y1, x2, y2)
+        brushlib.set_mat(brush, R.main_tex)
+
+        Trans.brush(brush)
+      end
+    end
+  end
+
+
   local function do_diagonal_seed(S, chunk, w_tex)
     local dir = chunk.dir
 
@@ -4349,6 +4379,8 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
 
     build_diag_half(S, dir, F, w_tex)
     build_diag_half(S, 10 - dir, B, w_tex)
+    
+    diag_fill_wall_gaps(S, dir)
   end
 
 
