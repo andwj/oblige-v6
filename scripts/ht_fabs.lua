@@ -116,10 +116,9 @@ SOLID_P3 =
 }
 
 
---[[ FIXME !!!!!!
 SOLID_P5 =
 {
-  prob = 9999
+  prob = 2000
 
   environment = "indoor"
   symmetry = "xy"
@@ -127,16 +126,15 @@ SOLID_P5 =
   structure =
   {
     "/...%"
-    ".Z#N."
+    "..#.."
     ".###."
-    ".%#/."
+    "..#.."
     "N...Z"
   }
 
   x_sizes = { "11111", "11211" }
   y_sizes = { "11111", "11211" }
 }
---]]
 
 
 SOLID_C1 =
@@ -485,22 +483,20 @@ LIQUID_O1 =
 }
 
 
---[[ FIXME !!!!!
 LIQUID_O2 =
 {
-  prob = 300
+  prob = 200
   shape = "O"
 
-  environment = "indoor"
   symmetry = "xy"
 
   structure =
   {
-    "/...%"
+    "....."
     "./~%."
     ".~~~."
     ".N~Z."
-    "N...Z"
+    "....."
   }
 
   x_sizes = { "11111", "11211", "11311" }
@@ -508,6 +504,7 @@ LIQUID_O2 =
 }
 
 
+--[[ FIXME !!!!!
 LIQUID_O2_OUT =
 {
   copy = "LIQUID_O2"
@@ -1225,9 +1222,9 @@ HEIGHT_SOLID_I5 =
   structure =
   {
     "##222##"
-    "#Z1^1N#"
+    "#/1^1%#"
     "#11111#"
-    "Z..^..N"
+    "/..^..%"
     "......."
   }
 
