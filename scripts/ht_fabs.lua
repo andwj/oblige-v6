@@ -33,7 +33,7 @@
 --
 --    ?         filler (in recursive patterns)
 --
---    / % N Z   diagonal pieces
+--    / % N Z   diagonal pieces (will often be completely solid)
 --
 --    < > v ^   stairs (straight)
 --
