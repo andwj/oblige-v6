@@ -4211,6 +4211,54 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
   end
 
 
+  local function diag_get_neighbor_info(S, dir)
+    -- FIXME  
+    return { kind="solid" }
+  end
+
+
+  local function diag_select_from_pair(info1, info2)
+    if info1.kind == "solid" then return info1 end
+    if info2.kind == "solid" then return info2 end
+
+    if info1.kind == "liquid" then return info2 end
+    if info2.kind == "liquid" then return info1 end
+
+    if info1.floor_h > info2.floor_h then return info1 end
+    if info2.floor_h > info1.floor_h then return info2 end
+
+    if info1.ceil_h < info2.ceil_h then return info1 end
+    if info2.ceil_h < info1.ceil_h then return info2 end
+    
+    return info1
+  end
+
+
+  local function build_diag_half(S, dir, info, w_tex)
+    -- FIXME  
+  end
+
+
+  local function do_diagonal_seed(S, chunk, w_tex)
+    local dir = chunk.dir
+
+    -- front half
+    local F1 = diag_get_neighbor_info(S, geom.ROTATE[1][dir])
+    local F2 = diag_get_neighbor_info(S, geom.ROTATE[7][dir])
+
+    -- back half
+    local B1 = diag_get_neighbor_info(S, geom.ROTATE[5][dir])
+    local B2 = diag_get_neighbor_info(S, geom.ROTATE[3][dir])
+
+    -- pick between them
+    local F = diag_select_from_pair(F1, F2)
+    local B = diag_select_from_pair(B1, B2)
+
+    build_diag_half(S, dir, F, w_tex)
+    build_diag_half(S, 10 - dir, B, w_tex)
+  end
+
+
   local function vis_mark_wall(S, side)
     gui.debugf("VIS %d %d %s\n", S.sx, S.sy, side)
   end
@@ -4497,11 +4545,8 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
       end
 
       if S.chunk[1] and S.chunk[1].is_diagonal then
-stderrf("\n********** DIAGONAL **********\n")
-w_tex = "LAVA1"
-      end
-
-      if S.trap_dir then
+        do_diagonal_seed(S, S.chunk[1], w_tex)
+      elseif S.trap_dir then
         do_fat_trap(S, w_tex)
       elseif S.cage_dir then
         do_fat_cage(S, w_tex)
