@@ -2548,7 +2548,7 @@ function Room_make_ceiling(R)
       local S = SEEDS[x][y]
       local ceil_h = S.ceil_h or R.ceil_h
 
-      if ceil_h and S.kind != "void" then
+      if ceil_h and not (S.kind == "void" and not S.is_diagonal) then
         if mode == "light" then
           if S.content != "pillar" and not S.mark_secret then
             Build.ceil_light(S, ceil_h, skin)
@@ -4228,7 +4228,7 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     info.ceil_h  = N.ceil_h or R.ceil_h or (info.floor_h + 256)
 
     if info.kind == "stair" then
-      local K = S.chunk[1]
+      local K = N.chunk[1]
       if K and K.src_floor and K.dest_floor then
         local z1 = K. src_floor.floor_h
         local z2 = K.dest_floor.floor_h
