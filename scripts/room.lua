@@ -4228,7 +4228,13 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     info.ceil_h  = N.ceil_h or R.ceil_h or (info.floor_h + 256)
 
     info.floor_mat = N.f_tex or sel(N.kind == "liquid", "_LIQUID", R.main_tex)
-    info.ceil_mat  = N.c_tex or sel(R.is_outdoor,       "_SKY",    R.ceil_tex)
+    info.ceil_mat  = N.c_tex or sel(R.is_outdoor, "_SKY", R.ceil_tex)
+
+    -- handle "fake sky"
+    if N.is_sky then
+      info.ceil_mat = "_SKY"
+      info.fake_sky = true
+    end
 
     -- these can be nil
     info.lower_mat = N.l_tex or N.w_tex or R.main_tex
@@ -4275,13 +4281,15 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
 
     -- oddly, picking the highest ceiling seems to work best
     if D2.ceil_h > D1.ceil_h then
-      info.ceil_h    = D2.ceil_h
-      info.ceil_mat  = D2.ceil_mat
-      info.upper_mat = D2.upper_mat
+      info.ceil_h     = D2.ceil_h
+      info.ceil_mat   = D2.ceil_mat
+      info.upper_mat  = D2.upper_mat
+      info.fake_sky   = D2.fake_sky
     else
-      info.ceil_h    = D1.ceil_h
-      info.ceil_mat  = D1.ceil_mat
-      info.upper_mat = D1.upper_mat
+      info.ceil_h     = D1.ceil_h
+      info.ceil_mat   = D1.ceil_mat
+      info.upper_mat  = D1.upper_mat
+      info.fake_sky   = D1.fake_sky
     end
 
     return info
@@ -4323,14 +4331,19 @@ gui.debugf("calc @ %s side:%d\n", S:tostr(), side)
     brushlib.set_mat(f_brush, info.lower_mat or info.floor_mat, info.floor_mat)
     brushlib.set_mat(c_brush, info.upper_mat or info. ceil_mat, info. ceil_mat)
 
-    -- UGH : shouldn't need to do this here
+    -- UGH : shouldn't need to do this stuff here
     if info.floor_mat == "_LIQUID" and LEVEL.liquid then
       f_brush[#f_brush].special = LEVEL.liquid.special
       f_brush[#f_brush].light   = LEVEL.liquid.light
     end
-
     if info.ceil_mat == "_SKY" then
-      brushlib.set_kind(c_brush, "sky")
+      if info.fake_sky then
+        local light
+        if not LEVEL.is_dark then light = LEVEL.sky_bright - 8 end
+        c_brush[#c_brush].light = light
+      else
+        brushlib.set_kind(c_brush, "sky")
+      end
     end
 
     Trans.brush(f_brush)
