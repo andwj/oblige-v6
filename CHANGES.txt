@@ -2,9 +2,12 @@
 CHANGES IN 6.20 (since 6.10)
 ============================
 
-+  new Gameplay Tweaks module
-
 +  added some basic monster closets
+
++  re-implemented some diagonal walls
+
++  new Gameplay Tweaks module
+   (can prevent monsters in start room, among other things)
 
 +  new "Easier" and "Harder" settings for monster strength
 
@@ -15,9 +18,9 @@ CHANGES IN 6.20 (since 6.10)
 
 !  removed "Always" setting for Caves and Outdoors
 
+-  ability to set the random seed
 -  in co-op mode prefer steep stairs instead of lifts
 -  better monster selection via new 'min_weapon' field
--  ability to set the random seed
 -  water is no longer damaging
 
 -  fixed error when all monsters in control module are "None"
