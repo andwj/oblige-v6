@@ -533,12 +533,14 @@ end
 
 function Monsters_zone_palettes()
   
+  -- NOTE: cannot support 'min_weapon' here since the palettes get sorted
+  --       (don't stay tied to a particular zone), whereas 'min_weapon' the
+  --       player has is very tied to a particular zone.  Ouch.
+
   local function prob_for_guard(mon)
     local info = GAME.MONSTERS[mon]
 
     if (info.prob or 0) <= 0 then return 0 end
-
-    -- FIXME !!!!  support min_weapon and weap_needed
 
     -- ignore theme-specific monsters (SS NAZI)
     if info.theme then return 0 end
