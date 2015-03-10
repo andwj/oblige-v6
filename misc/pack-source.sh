@@ -48,7 +48,7 @@ cp -av tools/qsavetex/*.[ch]* $dest/tools/qsavetex
 cp -av tools/qsavetex/Makefile* $dest/tools/qsavetex
 
 mkdir $dest/misc
-cp -av misc/pack*.sh $dest/misc
+cp -av misc/*.* $dest/misc
 
 mkdir $dest/obj_linux
 mkdir $dest/obj_linux/lua
