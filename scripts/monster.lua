@@ -2656,7 +2656,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
     -- also when 'keep weapons' gameplay tweak is on, give less ammo in later maps
     if PARAM.keep_weapons then
-      local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.8)
+      local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.6)
       local factor = 1.0 - along * 0.5
 
       ammo_mul = ammo_mul * factor
