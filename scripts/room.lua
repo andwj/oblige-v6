@@ -4960,7 +4960,7 @@ function Room_determine_spots()
         continue
       end
 
-      if S.content == "bridge" then
+      if S.kind == "stair" or S.content == "bridge" then
         solidify_seed(S)
         continue
       end
