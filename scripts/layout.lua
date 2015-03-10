@@ -3634,7 +3634,7 @@ gui.debugf("(skip SUB_%s : no entry_vhr)\n", tostring(A.id))
 
     R.use_solid_feature = rand.odds(75) and (not R.is_outdoor)
 
-    R.use_diagonals = rand.odds(50)
+    R.use_diagonals = rand.odds(60)
 
     -- create intiial area
     local AREA =
