@@ -3366,11 +3366,12 @@ function Room_build_seeds(R)
   end
 
 
-  local function content_big_item(item, mx, my, z)
+  local function content_big_item(S, item, mx, my, z)
     local fab_name = "Item_pedestal"
 
     -- FIXME: TEMP RUBBISH
-    if string.sub(item, 1, 2) == "ks" then
+    -- never use this underneath a 3D floor (as it has blocking lines)
+    if string.sub(item, 1, 2) == "ks" and not S.chunk[2] then
       fab_name = "Item_podium"
     end
 
@@ -3418,7 +3419,7 @@ function Room_build_seeds(R)
       Trans.entity("light", mx, my, z_top + 24, { cave_light=176 })
 
     else
-      content_big_item(item, mx, my, z1)
+      content_big_item(S, item, mx, my, z1)
     end
   end
 
@@ -3581,7 +3582,7 @@ function Room_build_seeds(R)
       -- bare item
       Trans.entity(item, mx, my, z1)
     else
-      content_big_item(item, mx, my, z1)
+      content_big_item(S, item, mx, my, z1)
     end
   end
 
