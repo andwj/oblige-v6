@@ -218,7 +218,7 @@ install: stripped
 	install -o root -m 644 data/doom2_boss/*.* $(SCRIPT_DIR)/data/doom2_boss
 	#
 	rm -Rf $(SCRIPT_DIR)/games
-	svn export games $(SCRIPT_DIR)/games
+	cp -a games $(SCRIPT_DIR)/games
 	chown -R root $(SCRIPT_DIR)/games
 	chmod -R g-s  $(SCRIPT_DIR)/games
 	#
