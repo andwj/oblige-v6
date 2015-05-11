@@ -79,15 +79,20 @@ MONSTER_KIND_TAB =
   scarce=2, less=3, normal=4, more=4.5, heaps=6, nuts=6
 }
 
-HEALTH_AMMO_ADJUSTS =
+HEALTH_FACTORS =
 {
-  none=0, scarce=0.4, less=0.7, normal=1.0, more=1.5, heaps=2.5,
+  none=0, scarce=0.40, less=0.64, normal=1.00, more=1.50, heaps=2.50
+}
+
+AMMO_FACTORS =
+{
+  none=0, scarce=0.70, less=0.90, normal=1.15, more=1.50, heaps=2.15
 }
 
 
-COOP_MON_FACTOR = 1.35
-COOP_HEALTH_FACTOR = 1.3
-COOP_AMMO_FACTOR   = 1.6
+COOP_MON_FACTOR    = 1.35
+COOP_HEALTH_FACTOR = 1.35
+COOP_AMMO_FACTOR   = 1.35
 
 
 -- Doom flags
@@ -1849,7 +1854,7 @@ function Monsters_in_room(R)
     local list = {}
 
     each mon,info in GAME.MONSTERS do
-      local prob = info.crazy_prob or info.prob or 0
+      local prob = info.crazy_prob or 50
 
       if not LEVEL.global_pal[mon] then prob = 0 end
 
@@ -2602,6 +2607,17 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
   end
 
 
+  local function is_weapon_upgraded(name, list)
+    each W in list do
+      if W.info.upgrades == name then
+        return true
+      end
+    end
+
+    return false
+  end
+
+
   local function collect_weapons(hmodel)
     local list = {}
     local seen = {}
@@ -2617,7 +2633,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     end
 
     -- gameplay_tweaks : assume weapons from previous levels
-    if PARAM.keep_weapons then
+    if true then
       each name,_ in EPISODE.seen_weapons do
       if not seen[name] then
         local info = assert(GAME.WEAPONS[name])
@@ -2630,6 +2646,14 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
 
     if #list == 0 then
       error("No usable weapons???")
+    end
+
+    -- remove "upgraded" weapons (e.g. supershotgun > shotgun)
+
+    for i = #list, 1, -1 do
+      if is_weapon_upgraded(list[i].info.name, list) then
+        table.remove(list, i)
+      end
     end
 
     return list
@@ -2650,16 +2674,16 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
   local function user_adjust_result(stats)
     -- apply the user's health/ammo adjustments here
 
-    local heal_mul = HEALTH_AMMO_ADJUSTS[OB_CONFIG.health]
-    local ammo_mul = HEALTH_AMMO_ADJUSTS[OB_CONFIG.ammo]
+    local heal_mul = HEALTH_FACTORS[OB_CONFIG.health]
+    local ammo_mul =   AMMO_FACTORS[OB_CONFIG.ammo]
 
     heal_mul = heal_mul * (PARAM.health_factor or 1)
     ammo_mul = ammo_mul * (PARAM.ammo_factor or 1)
 
     -- also when 'keep weapons' gameplay tweak is on, give less ammo in later maps
-    if PARAM.keep_weapons then
-      local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.6)
-      local factor = 1.0 - along * 0.5
+    if true then --- PARAM.keep_weapons then
+      local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.8)
+      local factor = 1.0 - along * 0.25
 
       ammo_mul = ammo_mul * factor
     end
