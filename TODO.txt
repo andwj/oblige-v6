@@ -2,12 +2,16 @@
 OBLIGE TODO
 ===========
 
+( see BUGS.txt )
+
 
 ______________________________________________________________________
 
   HIGH PRIORITY
 ______________________________________________________________________
 
+
+*  min_weapon for guard monsters
 
 *  support for Traps and free-standing Cages
 
