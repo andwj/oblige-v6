@@ -31,9 +31,6 @@
 --
 -- NOTES:
 --
--- Berserk is not really an extra weapon, but a powerup which
--- makes fist do much more damage.  The effect lasts until the
--- end of the level, so a weapon is a pretty good fit.
 --
 
 DOOM.WEAPONS =
@@ -43,30 +40,6 @@ DOOM.WEAPONS =
     attack = "melee"
     rate = 1.5
     damage = 10
-  }
-
-  saw =
-  {
-    id = 2005
-    level = 1
-    pref = 0.1
-    add_prob = 1
-    attack = "melee"
-    rate = 8.7
-    damage = 10
-  }
-
-  berserk =
-  {
-    id = 2023
-    level = 2
-    pref = 0.1
-    add_prob = 1
-    mp_prob = 2
-    attack = "melee"
-    rate = 1.5
-    damage = 90
-    give = { {health=70} }
   }
 
   pistol =
