@@ -2,7 +2,7 @@
 --  DOOM WEAPONS
 --------------------------------------------------------------------
 --
---  Copyright (C) 2006-2013 Andrew Apted
+--  Copyright (C) 2006-2015 Andrew Apted
 --  Copyright (C)      2011 Chris Pisarczyk
 --
 --  This program is free software; you can redistribute it and/or
@@ -18,7 +18,6 @@
 --
 -- pref       : usage preference [absent = never]
 -- add_prob   : probabiliiy of adding into level [absent = never]
--- start_prob : chance of appearing in start room
 -- mp_prob    : chance of being used in a Multi-Player map
 --
 -- rate   : firing rate (shots per second)
@@ -36,10 +35,6 @@
 -- makes fist do much more damage.  The effect lasts until the
 -- end of the level, so a weapon is a pretty good fit.
 --
--- Shotgun has a fairly low add_prob, since it is likely the
--- player will have encountered a shotgun zombie and already
--- have that weapon.
---
 
 DOOM.WEAPONS =
 {
@@ -54,8 +49,8 @@ DOOM.WEAPONS =
   {
     id = 2005
     level = 1
-    pref = 3
-    add_prob = 2
+    pref = 0.1
+    add_prob = 1
     attack = "melee"
     rate = 8.7
     damage = 10
@@ -65,8 +60,8 @@ DOOM.WEAPONS =
   {
     id = 2023
     level = 2
-    pref = 10
-    add_prob = 5
+    pref = 0.1
+    add_prob = 1
     mp_prob = 2
     attack = "melee"
     rate = 1.5
@@ -76,9 +71,10 @@ DOOM.WEAPONS =
 
   pistol =
   {
-    pref = 5
+    pref = 2
     attack = "hitscan"
     rate = 1.8
+    accuracy = 75
     damage = 10
     ammo = "bullet"
     per = 1
@@ -88,11 +84,11 @@ DOOM.WEAPONS =
   {
     id = 2001
     level = 1
-    pref = 70
-    add_prob = 10
-    start_prob = 60
+    pref = 40
+    add_prob = 40
     attack = "hitscan"
     rate = 0.9
+    accuracy = 65
     damage = 70
     splash = { 0,10 }
     ammo = "shell"
@@ -106,10 +102,11 @@ DOOM.WEAPONS =
     id = 2002
     level = 2
     pref = 60
-    add_prob = 35
-    start_prob = 15
+    upgrades = "pistol"
+    add_prob = 40
     attack = "hitscan"
     rate = 8.5
+    accuracy = 52
     damage = 10
     ammo = "bullet"
     per = 1
@@ -121,12 +118,13 @@ DOOM.WEAPONS =
   {
     id = 2003
     level = 4
-    pref = 30
-    add_prob = 25
+    pref = 40
+    add_prob = 65
     attack = "missile"
     rate = 1.7
+    accuracy = 78
     damage = 80
-    splash = { 50,20,5 }
+    splash = { 60,45,30,15 }
     ammo = "rocket"
     per = 1
     give = { {ammo="rocket",count=2} }
@@ -137,11 +135,12 @@ DOOM.WEAPONS =
   {
     id = 2004
     level = 5
-    pref = 30
-    add_prob = 15
+    pref = 60
+    add_prob = 50
     attack = "missile"
     rate = 11
-    damage = 20
+    accuracy = 65
+    damage = 23
     ammo = "cell"
     per = 1
     give = { {ammo="cell",count=40} }
@@ -152,13 +151,14 @@ DOOM.WEAPONS =
   {
     id = 2006
     level = 7
-    pref = 15
+    pref = 10
     add_prob = 20
     mp_prob = 6
     attack = "missile"
     rate = 0.8
-    damage = 200  -- tweaked value
-    splash = {100,100,100,100, 100,100,100,100 }
+    accuracy = 87
+    damage = 400
+    splash = { 75,75,75,75,75, 75,75,75,75,75 }
     ammo = "cell"
     per = 40
     give = { {ammo="cell",count=40} }
@@ -173,13 +173,15 @@ DOOM2.WEAPONS =
   {
     id = 82
     level = 3
-    pref = 50
-    add_prob = 20
-    start_prob = 40
+    pref = 40
+    upgrades = "shotty"
+    add_prob = 70
     attack = "hitscan"
     rate = 0.6
-    damage = 170
-    splash = { 0,30 }
+    accuracy = 65
+    damage = 160
+    -- use splash to simulate hitting a second monster
+    splash = { 0,40 }
     ammo = "shell"
     per = 2
     give = { {ammo="shell",count=8} }
