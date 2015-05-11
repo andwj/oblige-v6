@@ -2036,6 +2036,7 @@ function Quest_make_quests()
     Quest_add_weapons()
   end
 
-  Quest_nice_items()
+---!!!! DISABLED for 6.22-WIP
+-- Quest_nice_items()
 end
 
