@@ -71,7 +71,7 @@ evolves about same rate IN TERMS OF # MONSTERS ADDED.
 
 MONSTER_QUANTITIES =
 {
-  scarce=5, less=10, normal=15, more=25, heaps=40, nuts=200
+  scarce=4, less=8, normal=12, more=20, heaps=32, nuts=100
 }
 
 MONSTER_KIND_TAB =
@@ -1537,7 +1537,7 @@ function Monsters_in_room(R)
       qty = LEVEL.quantity
 
     elseif OB_CONFIG.mons == "mixed" then
-      qty = rand.pick { 8,14,25,45 }
+      qty = rand.pick { 4,8,12,20,32 }
 
     elseif OB_CONFIG.mons == "prog" then
       qty = LEVEL.game_mons_qty
@@ -1550,14 +1550,17 @@ function Monsters_in_room(R)
       assert(qty)
 
       -- tend to have more monsters in later rooms and levels
-      qty = qty * (3 + R.lev_along + LEVEL.ep_along) / 5
+      qty = qty * (4 + LEVEL.ep_along) / 5
     end
 
     assert(qty)
 
+    -- tend to have more monsters in later rooms of a level
+    qty = qty * (4 + R.lev_along) / 5
+
     -- less in secrets (usually much less)
     if R.kind == "SECRET_EXIT" then
-      qty = qty / 1.6
+      qty = qty / 1.5
     elseif R.quest.kind == "secret" then
       qty = qty / rand.pick { 2, 3, 4, 9 }
     end
@@ -1576,7 +1579,7 @@ function Monsters_in_room(R)
 
     -- make the final battle (of map) as epic as possible
     if R.final_battle then
-      qty = qty * 2.2
+      qty = qty * 1.7
 
     -- make in quiet in rooms with many traps 
     elseif R.trap_ratio and R.trap_ratio > rand.range(0.3, 0.6) then
@@ -1586,12 +1589,14 @@ function Monsters_in_room(R)
     elseif R.cool_down then
       qty = qty * 0.7
 
-    -- more in KEY rooms (extra boost in small rooms)
+    -- more in KEY rooms
     elseif R.purpose == "KEY" or R.purpose == "SWITCH" then
       qty = qty * 1.4
 
-      if R.svolume <= 16 then qty = qty * 1.2 end
     end
+
+    -- extra boost for small rooms
+    if R.svolume <= 16 then qty = qty * 1.2 end
 
     gui.debugf("Quantity = %1.1f\n", qty)
     return qty
@@ -1806,7 +1811,7 @@ function Monsters_in_room(R)
     local base_num
 
     if R.kind == "hallway" then
-      base_num = rand.range(2, 3)
+      return rand.sel(66, 1, 2)
 
     elseif OB_CONFIG.mons == "mixed" then
       base_num = rand.range(MONSTER_KIND_TAB.scarce, MONSTER_KIND_TAB.heaps)
