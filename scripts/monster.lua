@@ -545,6 +545,9 @@ function Monsters_zone_palettes()
   local function prob_for_guard(mon)
     local info = GAME.MONSTERS[mon]
 
+--!!!! DISABLED FOR 6.22-WIP
+do return 0 end
+
     if (info.prob or 0) <= 0 then return 0 end
 
     -- ignore theme-specific monsters (SS NAZI)
@@ -2728,6 +2731,11 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     gui.debugf("weapons = \n")
     each W in weap_list do
       gui.debugf("  %s\n", W.info.name)
+    end
+
+    gui.debugf("monsters = \n")
+    each M in mon_list do
+      gui.debugf("  %s\n", M.info.name)
     end
 
     Fight_Simulator(mon_list, weap_list, stats)
