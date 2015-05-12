@@ -2027,7 +2027,7 @@ function Monsters_in_room(R)
   end
 
 
-  local function place_monster(mon, spot, x, y, z, all_skills, is_cage)
+  local function place_monster(mon, spot, x, y, z, all_skills, mode)
     local info = GAME.MONSTERS[mon]
 
     -- handle replacements
@@ -2036,13 +2036,13 @@ function Monsters_in_room(R)
       info = assert(GAME.MONSTERS[mon])
     end
 
-    table.insert(R.monster_list, { info=info, is_cage=is_cage })
+    table.insert(R.monster_list, { info=info, is_cage=(mode == "cage") })
 
     -- decide deafness and where to look
     local deaf, focus
 
-    if is_cage then
-      def = false
+    if mode then
+      deaf = false
     elseif R.kind == "cave" or R.kind == "hallway" or info.float then
       deaf = rand.odds(65)
     elseif spot.ambush then
@@ -2058,7 +2058,7 @@ function Monsters_in_room(R)
 
     local angle
 
-    if (is_cage or R.kind == "hallway") and spot.angle then
+    if (mode or R.kind == "hallway") and spot.angle then
       angle = spot.angle
     else
       angle = monster_angle(spot, x, y, z, focus)
@@ -2444,7 +2444,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
   end
 
 
-  local function fill_cage_area(mon, spot)
+  local function fill_cage_area(mon, spot, mode)
     local info = assert(GAME.MONSTERS[mon])
 
     -- determine maximum number that will fit
@@ -2488,13 +2488,13 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
       local all_skills = (i == 1)
       local loc = list[i]
 
-      place_monster(mon, spot, loc.x, loc.y, loc.z, all_skills, "cage")
+      place_monster(mon, spot, loc.x, loc.y, loc.z, all_skills, mode)
     end
   end
 
 
-  local function fill_cages(spot_list, room_pal)
-    if table.empty(R.cage_spots) then return end
+  local function fill_cages(spot_list, room_pal, mode)
+    if table.empty(spot_list) then return end
 
     local qty = calc_quantity()
 
@@ -2504,7 +2504,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
       local mon = decide_cage_monster(spot, room_pal, used_mons)
 
       if mon then
-        fill_cage_area(mon, spot, qty)
+        fill_cage_area(mon, spot, mode)
 
         used_mons[mon] = 1
       end
@@ -2594,7 +2594,8 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     end
 
     if not table.empty(palette) then
-      fill_cages(R.cage_spots, palette)
+      fill_cages(R.cage_spots, palette, "cage")
+      fill_cages(R.trap_spots, palette, "trap")
     end
   end
 

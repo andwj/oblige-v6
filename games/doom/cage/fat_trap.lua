@@ -11,6 +11,8 @@ PREFABS.Trap_fat =
   bound_z1 = 0
   bound_z2 = 176
 
+  is_trap = true
+
   tag_1 = "?tag"
 }
 
