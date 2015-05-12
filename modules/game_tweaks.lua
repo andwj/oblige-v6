@@ -50,12 +50,14 @@ OB_MODULES["gameplay_tweaks"] =
 
   options =
   {
+--[[
     keep_weapons =
     {
       label="Keep Weapons"
       choices=GAMEPLAY_TWEAKS.YES_NO
       tooltip="Assumes the player keeps weapons from previous maps (and will add ammo for them, even if this map does not contain those weapons)"
     }
+--]]
 
     quiet_start =
     {

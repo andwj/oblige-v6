@@ -2637,7 +2637,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     end
 
     -- gameplay_tweaks : assume weapons from previous levels
-    if true then
+    if false then
       each name,_ in EPISODE.seen_weapons do
       if not seen[name] then
         local info = assert(GAME.WEAPONS[name])
@@ -2685,7 +2685,7 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     ammo_mul = ammo_mul * (PARAM.ammo_factor or 1)
 
     -- also when 'keep weapons' gameplay tweak is on, give less ammo in later maps
-    if true then --- PARAM.keep_weapons then
+    if false then --- PARAM.keep_weapons then
       local along = math.clamp(0, LEVEL.ep_along - 0.2, 0.8)
       local factor = 1.0 - along * 0.25
 
