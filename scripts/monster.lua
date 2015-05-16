@@ -1330,7 +1330,7 @@ function Monsters_do_pickups()
       if stat == "health" then
         qty = qty - item.give[1].health * count
       else
-        assert(item.give[1].ammo)
+        assert(item.give[1].ammo == stat)
         qty = qty - item.give[1].count * count
       end
     end
@@ -1358,7 +1358,7 @@ function Monsters_do_pickups()
 
     -- bonus stuff : this is _not_ applied to the hmodel
     -- (otherwise future rooms would get less of it).
-    actual_qty = actual_qty + bonus_for_room(R, stat)
+--!!!    actual_qty = actual_qty + bonus_for_room(R, stat)
 
     local excess = do_select_pickups(R, item_list, stat, actual_qty)
 
@@ -1421,6 +1421,9 @@ function Monsters_do_pickups()
   ---| Monsters_do_pickups |---
 
   gui.debugf("--- Monsters_do_pickups ---\n")
+
+  -- clear excess counters
+  Player_init()
 
   each Z in LEVEL.zones do
     each R in Z.rooms do
@@ -2755,6 +2758,8 @@ gui.debugf("wants =\n%s\n\n", table.tostr(wants))
     give_monster_drops(hmodel, mon_list)
 
     subtract_stuff_we_have(stats, hmodel)
+
+--  gui.debugf("final result = \n%s\n", table.tostr(stats,1))
   end
 
 
@@ -2948,6 +2953,7 @@ function Monster_make_battles()
   -- _where_ to place them (the hard part).
 
   Monsters_distribute_stats()
+
   Monsters_do_pickups()
 end
 
