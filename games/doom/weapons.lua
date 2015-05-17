@@ -63,7 +63,7 @@ DOOM.WEAPONS =
     rate = 0.9
     accuracy = 65
     damage = 70
-    splash = { 0,10 }
+    splash = { 15 }
     ammo = "shell"
     per = 1
     give = { {ammo="shell",count=8} }
@@ -96,8 +96,8 @@ DOOM.WEAPONS =
     attack = "missile"
     rate = 1.7
     accuracy = 80
-    damage = 80
-    splash = { 60,45,30,15 }
+    damage = 170
+    splash = { 65,20,5 }
     ammo = "rocket"
     per = 1
     give = { {ammo="rocket",count=2} }
@@ -130,8 +130,8 @@ DOOM.WEAPONS =
     attack = "missile"
     rate = 0.8
     accuracy = 80
-    damage = 500
-    splash = { 80,80,80,80,80, 80,80,80,80,80 }
+    damage = 640
+    splash = { 150,150,150,150, 80,80,80,80 }
     ammo = "cell"
     per = 40
     give = { {ammo="cell",count=40} }
